@@ -1,0 +1,15 @@
+OceanInsight-project1-source.zip
+300个裁剪NC、NPZ教学样本、5个年度船舶ZIP、匹配后的船舶主数据和源数据清单
+是学生真正要解析和转换的数据输入；第2天开始使用
+
+OceanInsight-project1-source.sha256
+source.zip的数字指纹
+检查大文件上传后有没有损坏
+
+OceanInsight-project1-starter.zip
+Python项目骨架、5个TODO、测试、配置模板、DataX模板、Hive/MariaDB SQL和云端运行脚本
+学生在这个代码包中补TODO，并用其中脚本完成四天全链路；第1天安装环境时就要读取配置模板
+
+OceanInsight-project1-starter.sha256
+starter.zip的数字指纹
+检查代码包上传后有没有损坏

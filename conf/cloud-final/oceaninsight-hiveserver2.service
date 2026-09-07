@@ -1,0 +1,27 @@
+[Unit]
+Description=OceanInsight HiveServer2
+After=network.target oceaninsight-hive-metastore.service
+Requires=oceaninsight-hive-metastore.service
+
+[Service]
+Type=simple
+User=ecs-user
+Group=ecs-user
+Environment=JAVA_HOME=/opt/java
+Environment=HADOOP_HOME=/opt/hadoop
+Environment=HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+Environment=HIVE_HOME=/opt/hive
+Environment=HIVE_CONF_DIR=/opt/hive/conf
+Environment=HIVE_LOG_DIR=/data/oceaninsight/hive/logs
+Environment=HIVESERVER2_PID_DIR=/data/oceaninsight/hive/pids
+Environment=HIVE_PID_DIR=/data/oceaninsight/hive/pids
+Environment=HADOOP_HEAPSIZE=768
+Environment=PATH=/opt/java/bin:/opt/hadoop/bin:/opt/hive/bin:/usr/local/bin:/usr/bin
+ExecStart=/opt/hive/bin/hiveserver2
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

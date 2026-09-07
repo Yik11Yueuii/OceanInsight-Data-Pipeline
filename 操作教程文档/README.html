@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OceanInsight 项目一：四天学生实训入口</title>
+<style>
+
+:root {
+    --c-primary: #0d3b66;
+    --c-primary-light: #1a5276;
+    --c-accent: #2980b9;
+    --c-text: #2c3e50;
+    --c-muted: #5d6d7e;
+    --c-bg: #ffffff;
+    --c-bg-soft: #f8f9fa;
+    --c-border: #e1e5ea;
+    --c-code-bg: #1e2b3a;
+    --c-code-text: #ecf0f1;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 56px 80px 56px;
+    background: #fff;
+}
+.doc-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--c-primary);
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--c-primary);
+    line-height: 1.3;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--c-primary-light);
+    line-height: 1.4;
+    page-break-after: avoid;
+}
+h1 {
+    font-size: 26px;
+    color: var(--c-primary);
+    border-bottom: 2.5px solid var(--c-primary);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+}
+h2 {
+    font-size: 21px;
+    color: var(--c-primary);
+    border-left: 5px solid var(--c-accent);
+    padding-left: 12px;
+    margin: 28px 0 12px;
+}
+h3 {
+    font-size: 17px;
+    color: var(--c-primary-light);
+    margin: 20px 0 8px;
+}
+h4 { font-size: 15px; color: var(--c-accent); margin: 16px 0 6px; }
+p { margin: 8px 0; text-align: justify; }
+pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+code {
+    background: #f0f3f6;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+li code { font-size: 12.5px; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #cfd8dc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+th {
+    background: linear-gradient(180deg, var(--c-accent) 0%, var(--c-primary-light) 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+tr:nth-child(even) td { background: #f4f8fb; }
+blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border-left: 5px solid #f39c12;
+    color: #7d5d00;
+    border-radius: 4px;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { margin: 8px 0; padding-left: 28px; }
+li { margin: 4px 0; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px dashed var(--c-accent); }
+a:hover { color: var(--c-primary); border-bottom-style: solid; }
+strong { color: #c0392b; font-weight: 700; }
+em { color: #8e44ad; font-style: italic; }
+hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+    margin: 24px 0;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.topbar {
+    background: var(--c-primary);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="topbar">OceanInsight  学生实训教程</div>
+<div class="container">
+<h1 class="doc-title">OceanInsight 项目一：四天学生实训入口</h1>
+<h1 id="oceaninsight">OceanInsight 项目一：四天学生实训入口</h1>
+<blockquote>
+<p>当前状态：四天Markdown正文已完成命令级审校。请使用同批次发放的最终 <code>source.zip + starter.zip</code> 及SHA256文件，不要混用历史压缩包。HTML版将在Markdown确认后另行生成。</p>
+</blockquote>
+<p>本目录是学生唯一操作入口。请严格按第1天到第4天顺序执行，不要跳天，不要同时运行两个全量任务。</p>
+<ol>
+<li><a href="第1天_购买ECS与安装完整环境.md">第1天：购买ECS与安装完整环境</a></li>
+<li><a href="第2天_完成TODO与转换异构数据.md">第2天：完成TODO与转换异构数据</a></li>
+<li><a href="第3天_DataX入湖与Hive数仓加工.md">第3天：DataX入湖与Hive数仓加工</a></li>
+<li><a href="第4天_Spark_ADS发布与项目验收.md">第4天：Spark ADS发布与项目验收</a></li>
+</ol>
+<p>统一约定：ECS 用户为 <code>ecs-user</code>，项目目录为 <code>/home/ecs-user/oceaninsight-project1</code>，所有命令均在阿里云 Workbench 的 Shell 终端执行。出现 <code>PASS</code> 才进入下一步。</p>
+<p>本教程不包含 FineBI。FineBI 数据连接、数据集和仪表板从项目二开始。</p>
+<h2 id="_1">四条安全红线</h2>
+<ul>
+<li>NameNode 只在第1天首次初始化时格式化一次，以后绝不再次格式化。</li>
+<li>不展示、复制或提交 <code>~/.config/oceaninsight/*.cnf</code> 中的密码。</li>
+<li>不使用 <code>chmod 777</code>，不把数据库端口向 <code>0.0.0.0/0</code> 开放。</li>
+<li>Workbench 断开后先查看原 PID 和日志，禁止直接重复启动同一任务。</li>
+</ul>
+<h2 id="_2">每天结束前</h2>
+<p>看到当天最后一个 PASS 后，保存终端日志。停止按量付费 ECS 时选择“节省停机模式”，不要释放实例；再次启动后先按教程恢复 HDFS 和 HiveServer2。</p>
+</div>
+</body>
+</html>

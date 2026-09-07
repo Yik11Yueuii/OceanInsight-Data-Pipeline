@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第4天：构建ADS、发布MariaDB与完成项目验收</title>
+<style>
+
+:root {
+    --c-primary: #0d3b66;
+    --c-primary-light: #1a5276;
+    --c-accent: #2980b9;
+    --c-text: #2c3e50;
+    --c-muted: #5d6d7e;
+    --c-bg: #ffffff;
+    --c-bg-soft: #f8f9fa;
+    --c-border: #e1e5ea;
+    --c-code-bg: #1e2b3a;
+    --c-code-text: #ecf0f1;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 56px 80px 56px;
+    background: #fff;
+}
+.doc-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--c-primary);
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--c-primary);
+    line-height: 1.3;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--c-primary-light);
+    line-height: 1.4;
+    page-break-after: avoid;
+}
+h1 {
+    font-size: 26px;
+    color: var(--c-primary);
+    border-bottom: 2.5px solid var(--c-primary);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+}
+h2 {
+    font-size: 21px;
+    color: var(--c-primary);
+    border-left: 5px solid var(--c-accent);
+    padding-left: 12px;
+    margin: 28px 0 12px;
+}
+h3 {
+    font-size: 17px;
+    color: var(--c-primary-light);
+    margin: 20px 0 8px;
+}
+h4 { font-size: 15px; color: var(--c-accent); margin: 16px 0 6px; }
+p { margin: 8px 0; text-align: justify; }
+pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+code {
+    background: #f0f3f6;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+li code { font-size: 12.5px; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #cfd8dc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+th {
+    background: linear-gradient(180deg, var(--c-accent) 0%, var(--c-primary-light) 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+tr:nth-child(even) td { background: #f4f8fb; }
+blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border-left: 5px solid #f39c12;
+    color: #7d5d00;
+    border-radius: 4px;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { margin: 8px 0; padding-left: 28px; }
+li { margin: 4px 0; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px dashed var(--c-accent); }
+a:hover { color: var(--c-primary); border-bottom-style: solid; }
+strong { color: #c0392b; font-weight: 700; }
+em { color: #8e44ad; font-style: italic; }
+hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+    margin: 24px 0;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.topbar {
+    background: var(--c-primary);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="topbar">OceanInsight  学生实训教程</div>
+<div class="container">
+<h1 class="doc-title">第4天：构建ADS、发布MariaDB与完成项目验收</h1>
+<h1 id="4adsmariadb">第4天：构建ADS、发布MariaDB与完成项目验收</h1>
+<p>版本：学生实操版 V1.0<br>
+适用环境：第3天ODS、DWD和DWS全部PASS，使用 <code>ecs-user</code> 登录ECS<br>
+今日目标：构建7张Hive ADS表，发布MariaDB，导出7份ADS CSV，完成三方对账并手动下载交付包。</p>
+<blockquote>
+<p>FineBI不属于项目一，本文件不创建FineBI账户、不开放3306公网端口。PID和阶段标题不代表完成，只有指定PASS才算完成。</p>
+</blockquote>
+<h2 id="_1">一、开始前检查</h2>
+<h3 id="1">步骤1：确认用户和目录</h3>
+<p>在Workbench Shell发送：</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<p>必须输出 <code>ecs-user</code>。发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/starter
+</code></pre>
+<h3 id="23pass">步骤2：确认第3天三个PASS</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">grep 'SPARK_HIVE_ODS_VERIFY=PASS' /data/oceaninsight/logs/spark_hive_ods_verify.log
+</code></pre>
+<pre><code class="language-bash">grep 'SPARK_DWD_BUILD=PASS' /data/oceaninsight/logs/spark_build_dwd.log
+</code></pre>
+<pre><code class="language-bash">grep 'SPARK_DWS_BUILD=PASS' /data/oceaninsight/logs/spark_build_dws.log
+</code></pre>
+<p>缺少任何一条都不要继续。</p>
+<h3 id="3java-17">步骤3：确认服务和Java 17</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<pre><code class="language-bash">sudo systemctl is-active mariadb
+</code></pre>
+<pre><code class="language-bash">/usr/lib/jvm/java-17/bin/java -version
+</code></pre>
+<p>应看到NameNode、DataNode、两个Hive RunJar、MariaDB为 <code>active</code>，Java版本为17。</p>
+<h2 id="5ads">二、构建5张核心ADS表</h2>
+<h3 id="4ads">步骤4：提交核心ADS任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_build_ads_core.py \
+  &gt; /data/oceaninsight/logs/spark_build_ads_core.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<p>立即保存PID：</p>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/spark_build_ads_core.pid
+</code></pre>
+<h3 id="5ads_1">步骤5：等待核心ADS完成</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/logs/spark_build_ads_core.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 100 /data/oceaninsight/logs/spark_build_ads_core.log
+</code></pre>
+<p>PID仍在时继续每隔60秒查看原任务，不要重复提交。最终必须看到：</p>
+<pre><code class="language-text">ADS_OCEAN_OVERVIEW_ROWS=61
+ADS_OCEAN_MONTHLY_ROWS=721200
+ADS_OCEAN_MONTHLY_DISTINCT_KEYS=721200
+ADS_OCEAN_TREND_ROWS=2220
+ADS_OCEAN_TREND_DISTINCT_KEYS=2220
+ADS_OCEAN_TREND_DETAIL_ROWS=2687015
+ADS_VESSEL_MONTHLY_ROWS=7404
+ADS_VESSEL_MONTHLY_DISTINCT_KEYS=7404
+ADS_RELATION_ROWS=226192
+ADS_RELATION_DISTINCT_KEYS=226192
+SPARK_ADS_CORE_BUILD=PASS
+</code></pre>
+<p>5张表分别是海洋总览、月度网格、指标趋势、船舶月度网格和海洋船舶关联。</p>
+<h2 id="ads">三、构建船旗国和船型ADS</h2>
+<h3 id="6ads">步骤6：提交第二段ADS任务</h3>
+<p>只有核心ADS PASS后发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_build_ads_vessel_class.py \
+  &gt; /data/oceaninsight/logs/spark_build_ads_vessel_class.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/spark_build_ads_vessel_class.pid
+</code></pre>
+<h3 id="7ads">步骤7：等待第二段ADS完成</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/spark_build_ads_vessel_class.pid)&quot; -f
+tail -n 100 /data/oceaninsight/logs/spark_build_ads_vessel_class.log
+</code></pre>
+<p>未完成就继续等待60秒。最终必须看到：</p>
+<pre><code class="language-text">DWS_FLAG_CLASS_ROWS=1691
+DWS_FLAG_CLASS_DISTINCT_KEYS=1691
+DWS_FLAG_CLASS_DETAIL_ROWS=18638286
+DWS_FLAG_CLASS_VESSEL_KEYS=149660
+ADS_VESSEL_FLAG_ROWS=687
+ADS_VESSEL_FLAG_DISTINCT_KEYS=687
+ADS_VESSEL_FLAG_DETAIL_ROWS=18638286
+ADS_VESSEL_FLAG_VESSEL_KEYS=149660
+ADS_VESSEL_CLASS_ROWS=80
+ADS_VESSEL_CLASS_DISTINCT_KEYS=80
+ADS_VESSEL_CLASS_DETAIL_ROWS=18638286
+ADS_VESSEL_CLASS_VESSEL_KEYS=149660
+SPARK_ADS_VESSEL_CLASS_BUILD=PASS
+</code></pre>
+<p>船旗国和船型空值统一归为 <code>UNKNOWN</code>；两条路线均完整回卷18,638,286条活动和149,660个主数据业务键。</p>
+<h2 id="7hive-ads">四、验收7张Hive ADS表</h2>
+<h3 id="8">步骤8：查看表名</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+  -e 'SHOW TABLES IN ocean_ads;'
+</code></pre>
+<p>必须看到：</p>
+<pre><code class="language-text">ads_ocean_overview
+ads_ocean_monthly_grid
+ads_ocean_indicator_trend
+ads_vessel_monthly_grid
+ads_ocean_vessel_relation
+ads_vessel_flag_year
+ads_vessel_class_year
+</code></pre>
+<h3 id="9hive">步骤9：核对Hive七表行数</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">for item in ads_ocean_overview:61 ads_ocean_monthly_grid:721200 \
+  ads_ocean_indicator_trend:2220 ads_vessel_monthly_grid:7404 \
+  ads_ocean_vessel_relation:226192 ads_vessel_flag_year:687 \
+  ads_vessel_class_year:80
+do
+  table=&quot;${item%%:*}&quot;; expected=&quot;${item##*:}&quot;
+  actual=$(beeline -u 'jdbc:hive2://127.0.0.1:10000/default' \
+    -n ecs-user --silent=true --showHeader=false --outputformat=tsv2 \
+    -e &quot;SELECT COUNT(*) FROM ocean_ads.${table};&quot; 2&gt;/dev/null \
+    | grep -E '^[0-9]+$' | tail -n 1)
+  echo &quot;${table}=${actual} expected=${expected}&quot;
+  test &quot;$actual&quot; = &quot;$expected&quot; || exit 1
+done
+echo 'HIVE_ADS_ROWS_VERIFY=PASS'
+</code></pre>
+<p>必须看到 <code>HIVE_ADS_ROWS_VERIFY=PASS</code>。</p>
+<h3 id="10ads">步骤10：检查ADS表格式</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+  --silent=true --showHeader=false --outputformat=tsv2 \
+  -e 'DESCRIBE FORMATTED ocean_ads.ads_ocean_monthly_grid;' \
+  | grep -E 'Table Type:|InputFormat:|Location:'
+</code></pre>
+<p>实测正确状态是 <code>EXTERNAL_TABLE</code>、Parquet和 <code>/oceaninsight/ads/...</code> Location，不要求 <code>MANAGED_TABLE</code>。</p>
+<h2 id="mariadb">五、创建MariaDB七张结果表</h2>
+<h3 id="11jdbc">步骤11：检查私有配置和JDBC驱动</h3>
+<p>发送：</p>
+<pre><code class="language-bash">stat -c '%a %U %n' &quot;$HOME/.config/oceaninsight/ads-db.cnf&quot;
+</code></pre>
+<p>必须显示权限600、所有者 <code>ecs-user</code>。不要 <code>cat</code> 密码文件。发送：</p>
+<pre><code class="language-bash">test -f /opt/hive/lib/mysql-connector-j-8.4.0.jar \
+  &amp;&amp; echo 'MYSQL_CONNECTOR=PASS'
+</code></pre>
+<h3 id="12sql">步骤12：执行建表SQL</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mariadb --defaults-extra-file=&quot;$HOME/.config/oceaninsight/ads-db.cnf&quot; \
+  &lt; sql/mysql/001_ads_schema.sql
+</code></pre>
+<p>没有SQL错误才继续。最终SQL已用反引号引用 <code>year_month</code>；<code>YEAR_MONTH</code> 是MariaDB关键字，不能删除反引号。</p>
+<h3 id="13">步骤13：确认七张表为空</h3>
+<p>发送：</p>
+<pre><code class="language-bash">for table in ads_ocean_overview ads_ocean_monthly_grid \
+  ads_ocean_indicator_trend ads_vessel_monthly_grid \
+  ads_ocean_vessel_relation ads_vessel_flag_year ads_vessel_class_year
+do
+  mariadb --defaults-extra-file=&quot;$HOME/.config/oceaninsight/ads-db.cnf&quot; \
+    --batch --skip-column-names ocean_insight_ads \
+    -e &quot;SELECT '${table}',COUNT(*) FROM ${table};&quot;
+done
+</code></pre>
+<p>七张表都必须是0行。发布脚本使用 <code>append</code>，非0时停止，不要重复发布。</p>
+<h2 id="mariadb_1">六、先发布MariaDB总览表</h2>
+<h3 id="14">步骤14：提交单表试发布</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 spark-submit \
+  --jars /opt/hive/lib/mysql-connector-j-8.4.0.jar \
+  scripts/cloud/spark_publish_mariadb_overview.py \
+  &gt; /data/oceaninsight/logs/publish_mariadb_overview.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/publish_mariadb_overview.pid
+</code></pre>
+<p>脚本从权限600的CNF读取连接信息，不会在命令或日志中显示密码。</p>
+<h3 id="15">步骤15：等待并验收总览表</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 30
+ps -p &quot;$(cat /data/oceaninsight/logs/publish_mariadb_overview.pid)&quot; -f
+tail -n 60 /data/oceaninsight/logs/publish_mariadb_overview.log
+</code></pre>
+<p>必须看到：</p>
+<pre><code class="language-text">HIVE_OVERVIEW_ROWS=61
+SPARK_JDBC_OVERVIEW_WRITE=PASS
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">mariadb --defaults-extra-file=&quot;$HOME/.config/oceaninsight/ads-db.cnf&quot; \
+  --batch --skip-column-names ocean_insight_ads \
+  -e &quot;SELECT COUNT(*),COUNT(DISTINCT CONCAT(scope_type,'|',\`year_month\`)),COUNT(DISTINCT batch_id),MIN(batch_id),MAX(batch_id) FROM ads_ocean_overview;&quot;
+</code></pre>
+<p>预期为61行、61个唯一键、1个批次，最小和最大批次均为 <code>student-ads-20260825</code>。</p>
+<h2 id="mariadb_2">七、发布MariaDB其余六表</h2>
+<h3 id="16">步骤16：提交六表任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 spark-submit \
+  --jars /opt/hive/lib/mysql-connector-j-8.4.0.jar \
+  scripts/cloud/spark_publish_mariadb_ads.py \
+  &gt; /data/oceaninsight/logs/publish_mariadb_ads.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/publish_mariadb_ads.pid
+</code></pre>
+<h3 id="17">步骤17：等待六表发布完成</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/publish_mariadb_ads.pid)&quot; -f
+tail -n 100 /data/oceaninsight/logs/publish_mariadb_ads.log
+</code></pre>
+<p>未完成就继续等待60秒。每张表应出现 <code>JDBC_WRITE_TABLE=... PASS</code>，最后必须看到 <code>SPARK_JDBC_ADS_ALL_WRITE=PASS</code>。不要再次运行发布脚本。</p>
+<h3 id="18mariadb">步骤18：核对MariaDB行数和批次</h3>
+<p>发送：</p>
+<pre><code class="language-bash">for item in ads_ocean_overview:61 ads_ocean_monthly_grid:721200 \
+  ads_ocean_indicator_trend:2220 ads_vessel_monthly_grid:7404 \
+  ads_ocean_vessel_relation:226192 ads_vessel_flag_year:687 \
+  ads_vessel_class_year:80
+do
+  table=&quot;${item%%:*}&quot;; expected=&quot;${item##*:}&quot;
+  result=$(mariadb --defaults-extra-file=&quot;$HOME/.config/oceaninsight/ads-db.cnf&quot; \
+    --batch --skip-column-names ocean_insight_ads \
+    -e &quot;SELECT COUNT(*),COUNT(DISTINCT batch_id),MIN(batch_id),MAX(batch_id) FROM ${table};&quot;)
+  echo &quot;${table} ${result} expected=${expected}&quot;
+  test &quot;$(printf '%s\n' &quot;$result&quot; | awk '{print $1}')&quot; = &quot;$expected&quot; || exit 1
+done
+echo 'MARIADB_ADS_VERIFY=PASS'
+</code></pre>
+<p>每行批次数必须为1，最小和最大批次必须为 <code>student-ads-20260825</code>。</p>
+<h2 id="7ads-csv">八、导出7份ADS CSV</h2>
+<h3 id="19csv">步骤19：提交CSV导出任务</h3>
+<p>先确认输出不存在：</p>
+<pre><code class="language-bash">test ! -e ../output/ads_csv \
+  &amp;&amp; echo 'ADS_CSV_OUTPUT_READY=YES' \
+  || echo 'ADS_CSV_OUTPUT_READY=NO'
+</code></pre>
+<p>第一次必须显示 <code>YES</code>。发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_export_ads_csv.py \
+  &gt; /data/oceaninsight/logs/export_ads_csv.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/export_ads_csv.pid
+</code></pre>
+<p>脚本使用 <code>file:///home/...</code> 本地URI；没有 <code>file:///</code> 时Spark会误写入HDFS。</p>
+<h3 id="20csv">步骤20：等待CSV导出完成</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/export_ads_csv.pid)&quot; -f
+tail -n 100 /data/oceaninsight/logs/export_ads_csv.log
+</code></pre>
+<p>未完成就继续等待60秒。最终必须看到：</p>
+<pre><code class="language-text">ADS_CSV_TABLE_COUNT=7
+ADS_CSV_MANIFEST=/home/ecs-user/oceaninsight-project1/output/ads_csv/ads_csv_manifest.json
+SPARK_ADS_CSV_EXPORT=PASS
+</code></pre>
+<h3 id="21csvmanifest">步骤21：验收CSV和Manifest</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import hashlib, json
+from pathlib import Path
+root = Path('../output/ads_csv')
+m = json.loads((root/'ads_csv_manifest.json').read_text())
+expected = {'ads_ocean_overview':61,'ads_ocean_monthly_grid':721200,
+'ads_ocean_indicator_trend':2220,'ads_vessel_monthly_grid':7404,
+'ads_ocean_vessel_relation':226192,'ads_vessel_flag_year':687,
+'ads_vessel_class_year':80}
+assert m['table_count'] == 7 and m['batch_id'] == 'student-ads-20260825'
+for item in m['tables']:
+    name = item['table'].split('.')[-1]; path = root/f'{name}.csv'
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+    assert item['rows'] == expected[name]
+    assert item['csv_lines'] == expected[name] + 1
+    assert item['sha256'] == digest.hexdigest()
+print('ADS_CSV_MANIFEST_VERIFY=PASS')
+PY
+</code></pre>
+<p>必须看到 <code>ADS_CSV_MANIFEST_VERIFY=PASS</code>。7份CSV约118 MiB，每份有1行表头。</p>
+<h2 id="_2">九、三方对账</h2>
+<h3 id="22">步骤22：核对统一结果</h3>
+<table>
+<thead>
+<tr>
+<th>ADS表</th>
+<th style="text-align: right;">Hive</th>
+<th style="text-align: right;">MariaDB</th>
+<th style="text-align: right;">CSV数据行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ads_ocean_overview</code></td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">61</td>
+</tr>
+<tr>
+<td><code>ads_ocean_monthly_grid</code></td>
+<td style="text-align: right;">721,200</td>
+<td style="text-align: right;">721,200</td>
+<td style="text-align: right;">721,200</td>
+</tr>
+<tr>
+<td><code>ads_ocean_indicator_trend</code></td>
+<td style="text-align: right;">2,220</td>
+<td style="text-align: right;">2,220</td>
+<td style="text-align: right;">2,220</td>
+</tr>
+<tr>
+<td><code>ads_vessel_monthly_grid</code></td>
+<td style="text-align: right;">7,404</td>
+<td style="text-align: right;">7,404</td>
+<td style="text-align: right;">7,404</td>
+</tr>
+<tr>
+<td><code>ads_ocean_vessel_relation</code></td>
+<td style="text-align: right;">226,192</td>
+<td style="text-align: right;">226,192</td>
+<td style="text-align: right;">226,192</td>
+</tr>
+<tr>
+<td><code>ads_vessel_flag_year</code></td>
+<td style="text-align: right;">687</td>
+<td style="text-align: right;">687</td>
+<td style="text-align: right;">687</td>
+</tr>
+<tr>
+<td><code>ads_vessel_class_year</code></td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">80</td>
+</tr>
+</tbody>
+</table>
+<p>步骤9、18、21全部PASS即完成三方行数、批次和SHA256对账。构建脚本还自动确认：海洋趋势回卷2,687,015条，船舶月度/船旗国/船型均回卷18,638,286条，船旗国和船型均回卷149,660个船舶业务键。</p>
+<h2 id="csv">十、打包并手动下载CSV</h2>
+<h3 id="23ecs">步骤23：在ECS打包</h3>
+<p>发送：</p>
+<pre><code class="language-bash">bash scripts/cloud/package_delivery_assets.sh
+</code></pre>
+<p>必须看到 <code>DELIVERY_ASSET_PACKAGE=PASS</code>。发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/output/delivery
+ls -lh OceanInsight-project1-ads-csv.tar.gz \
+  OceanInsight-project1-ads-csv.tar.gz.sha256
+</code></pre>
+<p>压缩包约30.4 MiB。发送：</p>
+<pre><code class="language-bash">sha256sum -c OceanInsight-project1-ads-csv.tar.gz.sha256
+</code></pre>
+<p>必须看到 <code>OceanInsight-project1-ads-csv.tar.gz: OK</code>。</p>
+<h3 id="24workbench">步骤24：在Workbench手动下载</h3>
+<p>这一步操作文件管理器，不在Shell输入：</p>
+<ol>
+<li>进入 <code>/home/ecs-user/oceaninsight-project1/output/delivery</code>。</li>
+<li>右键下载 <code>OceanInsight-project1-ads-csv.tar.gz</code>。</li>
+<li>右键下载 <code>OceanInsight-project1-ads-csv.tar.gz.sha256</code>。</li>
+<li>等待文件任务中心两项都显示绿色“完成”。</li>
+</ol>
+<h3 id="25windows">步骤25：在Windows校验下载包</h3>
+<p>打开学生电脑的Windows PowerShell，发送：</p>
+<pre><code class="language-powershell">Set-Location &quot;$env:USERPROFILE\Downloads&quot;
+</code></pre>
+<pre><code class="language-powershell">$expected=(Get-Content .\OceanInsight-project1-ads-csv.tar.gz.sha256).Split()[0].ToUpper()
+$actual=(Get-FileHash .\OceanInsight-project1-ads-csv.tar.gz -Algorithm SHA256).Hash.ToUpper()
+if($actual -eq $expected){'ADS_DOWNLOAD_SHA256=PASS'}else{'ADS_DOWNLOAD_SHA256=FAIL'}
+</code></pre>
+<p>必须看到 <code>ADS_DOWNLOAD_SHA256=PASS</code>。</p>
+<h3 id="26windows">步骤26：在Windows解压检查</h3>
+<p>继续发送：</p>
+<pre><code class="language-powershell">tar -xzf .\OceanInsight-project1-ads-csv.tar.gz
+</code></pre>
+<pre><code class="language-powershell">(Get-ChildItem .\output\ads_csv -Filter 'ads_*.csv' -File).Count
+</code></pre>
+<p>必须输出 <code>7</code>。发送：</p>
+<pre><code class="language-powershell">Test-Path .\output\ads_csv\ads_csv_manifest.json
+</code></pre>
+<p>必须输出 <code>True</code>。学生无需Codex即可完成下载与验证。</p>
+<h2 id="_3">十一、项目一最终验收</h2>
+<h3 id="2712">步骤27：重新运行12项测试</h3>
+<p>回到Workbench Shell发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/starter
+../.venv/bin/python -m unittest discover -s tests -v
+</code></pre>
+<p>必须看到 <code>Ran 12 tests</code> 和 <code>OK</code>。</p>
+<h3 id="288pass">步骤28：检查8个核心PASS</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">for pair in \
+  'spark_hive_ods_verify.log|SPARK_HIVE_ODS_VERIFY=PASS' \
+  'spark_build_dwd.log|SPARK_DWD_BUILD=PASS' \
+  'spark_build_dws.log|SPARK_DWS_BUILD=PASS' \
+  'spark_build_ads_core.log|SPARK_ADS_CORE_BUILD=PASS' \
+  'spark_build_ads_vessel_class.log|SPARK_ADS_VESSEL_CLASS_BUILD=PASS' \
+  'publish_mariadb_overview.log|SPARK_JDBC_OVERVIEW_WRITE=PASS' \
+  'publish_mariadb_ads.log|SPARK_JDBC_ADS_ALL_WRITE=PASS' \
+  'export_ads_csv.log|SPARK_ADS_CSV_EXPORT=PASS'
+do
+  file=&quot;${pair%%|*}&quot;; marker=&quot;${pair#*|}&quot;
+  grep -Fq &quot;$marker&quot; &quot;/data/oceaninsight/logs/$file&quot; || exit 1
+  echo &quot;$marker&quot;
+done
+echo 'PROJECT1_ALL_PASS_MARKERS=PASS'
+</code></pre>
+<p>必须显示8个PASS和 <code>PROJECT1_ALL_PASS_MARKERS=PASS</code>。</p>
+<h3 id="29">步骤29：检查服务、端口和磁盘</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<pre><code class="language-bash">sudo ss -lntp | grep -E ':(3306|9000|9083|10000)\b'
+</code></pre>
+<pre><code class="language-bash">df -h /
+</code></pre>
+<pre><code class="language-bash">hdfs dfs -du -h /oceaninsight
+</code></pre>
+<p>实测最终系统盘约使用19 GiB、剩余约76 GiB。不要删除服务器数据、日志或备份。</p>
+<h2 id="_4">十二、最终通过标准</h2>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>学生代码</td>
+<td>5个TODO完成，12项测试OK</td>
+</tr>
+<tr>
+<td>异构转换</td>
+<td>2份NPZ、300份NC、5年船舶、149,660条主数据</td>
+</tr>
+<tr>
+<td>ODS</td>
+<td>海洋3,357,840、活动18,638,286、主数据149,660</td>
+</tr>
+<tr>
+<td>DWD/DWS</td>
+<td>清洗、唯一键和明细回卷全部PASS</td>
+</tr>
+<tr>
+<td>Hive ADS</td>
+<td>7张表行数、业务键、回卷正确</td>
+</tr>
+<tr>
+<td>MariaDB</td>
+<td>7张表，批次唯一为 <code>student-ads-20260825</code></td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>7份CSV、Manifest及逐文件SHA256正确</td>
+</tr>
+<tr>
+<td>下载</td>
+<td>本机包SHA256通过，解出7份CSV和Manifest</td>
+</tr>
+<tr>
+<td>保留</td>
+<td>服务正常，不删除数据、日志、备份，不释放ECS</td>
+</tr>
+</tbody>
+</table>
+<p>以上全部通过，项目一四天实验完成。项目二的FineBI安全接入另行讲解；项目一结束时不要开放MariaDB公网3306。</p>
+</div>
+</body>
+</html>

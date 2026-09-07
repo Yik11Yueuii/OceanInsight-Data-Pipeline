@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3天：DataX入湖与Hive数仓加工</title>
+<style>
+
+:root {
+    --c-primary: #0d3b66;
+    --c-primary-light: #1a5276;
+    --c-accent: #2980b9;
+    --c-text: #2c3e50;
+    --c-muted: #5d6d7e;
+    --c-bg: #ffffff;
+    --c-bg-soft: #f8f9fa;
+    --c-border: #e1e5ea;
+    --c-code-bg: #1e2b3a;
+    --c-code-text: #ecf0f1;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 56px 80px 56px;
+    background: #fff;
+}
+.doc-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--c-primary);
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--c-primary);
+    line-height: 1.3;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--c-primary-light);
+    line-height: 1.4;
+    page-break-after: avoid;
+}
+h1 {
+    font-size: 26px;
+    color: var(--c-primary);
+    border-bottom: 2.5px solid var(--c-primary);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+}
+h2 {
+    font-size: 21px;
+    color: var(--c-primary);
+    border-left: 5px solid var(--c-accent);
+    padding-left: 12px;
+    margin: 28px 0 12px;
+}
+h3 {
+    font-size: 17px;
+    color: var(--c-primary-light);
+    margin: 20px 0 8px;
+}
+h4 { font-size: 15px; color: var(--c-accent); margin: 16px 0 6px; }
+p { margin: 8px 0; text-align: justify; }
+pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+code {
+    background: #f0f3f6;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+li code { font-size: 12.5px; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #cfd8dc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+th {
+    background: linear-gradient(180deg, var(--c-accent) 0%, var(--c-primary-light) 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+tr:nth-child(even) td { background: #f4f8fb; }
+blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border-left: 5px solid #f39c12;
+    color: #7d5d00;
+    border-radius: 4px;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { margin: 8px 0; padding-left: 28px; }
+li { margin: 4px 0; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px dashed var(--c-accent); }
+a:hover { color: var(--c-primary); border-bottom-style: solid; }
+strong { color: #c0392b; font-weight: 700; }
+em { color: #8e44ad; font-style: italic; }
+hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+    margin: 24px 0;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.topbar {
+    background: var(--c-primary);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="topbar">OceanInsight  学生实训教程</div>
+<div class="container">
+<h1 class="doc-title">第3天：DataX入湖与Hive数仓加工</h1>
+<h1 id="3dataxhive">第3天：DataX入湖与Hive数仓加工</h1>
+<p>版本：学生实操版 V1.0<br>
+适用环境：第2天全部验收通过，使用 <code>ecs-user</code> 登录ECS<br>
+今日目标：将306份标准CSV通过DataX写入HDFS，建立3张Hive ODS外表，完成ODS全量质量检查，并用Spark构建DWD和DWS。</p>
+<blockquote>
+<p>今天会扫描两千多万行数据。后台命令返回PID只表示任务启动；必须继续检查PID、日志和PASS标志。已有HDFS文件会被批量脚本跳过，不要为了“重新开始”删除成果。</p>
+</blockquote>
+<h2 id="_1">一、开始前检查服务与成果</h2>
+<h3 id="1">步骤1：确认用户和项目目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<p>必须输出 <code>ecs-user</code>。发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/starter
+</code></pre>
+<h3 id="2">步骤2：运行项目预检脚本</h3>
+<p>发送：</p>
+<pre><code class="language-bash">bash scripts/cloud/preflight.sh
+</code></pre>
+<p>必须看到：</p>
+<pre><code class="language-text">PREFLIGHT=PASS
+</code></pre>
+<p>如果脚本提示HDFS未运行，只启动已有NameNode和DataNode，禁止格式化：</p>
+<pre><code class="language-bash">hdfs --daemon start namenode
+hdfs --daemon start datanode
+sleep 5
+</code></pre>
+<p>然后重新运行预检脚本。</p>
+<h3 id="3dataxhdfs">步骤3：确认DataX与HDFS可用</h3>
+<p>发送：</p>
+<pre><code class="language-bash">command -v datax
+</code></pre>
+<p>预期输出 <code>/usr/local/bin/datax</code>。发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight
+</code></pre>
+<p>应正常列出目录。</p>
+<h3 id="42">步骤4：确认第2天本地成果</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">find ../output/ods/ocean -type f -name '*.csv' | wc -l
+</code></pre>
+<pre><code class="language-bash">find ../output/ods/vessel -type f -name 'vessel_activity_*.csv' | wc -l
+</code></pre>
+<pre><code class="language-bash">test -f ../output/ods/vessel/vessel_master.csv \
+  &amp;&amp; echo 'VESSEL_MASTER_LOCAL=PASS'
+</code></pre>
+<p>预期依次为 <code>300</code>、<code>5</code> 和 <code>VESSEL_MASTER_LOCAL=PASS</code>。</p>
+<h2 id="dataxhdfs">二、准备DataX目录和HDFS正式目录</h2>
+<h3 id="5datax">步骤5：创建DataX作业与日志目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo install -d -o ecs-user -g ecs-user \
+  /data/oceaninsight/datax/jobs \
+  /data/oceaninsight/datax/logs
+</code></pre>
+<p>作业JSON和每个任务的日志保存在数据盘目录，避免散落在项目源码中。</p>
+<h3 id="6hdfs-ods">步骤6：创建三个HDFS ODS目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -mkdir -p \
+  /oceaninsight/ods/ocean_observation \
+  /oceaninsight/ods/vessel_activity \
+  /oceaninsight/ods/vessel_master
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight/ods
+</code></pre>
+<p>必须看到三个目录。</p>
+<h3 id="7datax">步骤7：记住DataX统一配置规则</h3>
+<p>本项目全部DataX作业固定使用：</p>
+<pre><code class="language-text">channel=1
+errorLimit.record=0
+skipHeader=true
+fileType=text
+writeMode=nonConflict
+所有字段显式声明为string
+</code></pre>
+<p>CSV表头在DataX读取时已经跳过。TEXT不压缩时完全省略 <code>compress</code>，不能填写 <code>"compress":"NONE"</code>。</p>
+<h2 id="csvhdfs">三、先把一个海洋CSV写入HDFS</h2>
+<h3 id="8datax">步骤8：生成单文件DataX作业</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+
+names = [
+    'year_month', 'indicator_code', 'depth_m', 'depth_level',
+    'source_lat', 'source_lon', 'grid_lat', 'grid_lon', 'grid_id',
+    'value', 'unit', 'quality_flag', 'source_file', 'batch_id',
+]
+
+job = {'job': {'setting': {
+    'speed': {'channel': 1}, 'errorLimit': {'record': 0},
+}, 'content': [{'reader': {'name': 'txtfilereader', 'parameter': {
+    'path': ['/home/ecs-user/oceaninsight-project1/output/ods/ocean/temperature/2017-01.csv'],
+    'encoding': 'UTF-8', 'skipHeader': True, 'fieldDelimiter': ',',
+    'column': [{'index': i, 'type': 'string'} for i in range(14)],
+}}, 'writer': {'name': 'hdfswriter', 'parameter': {
+    'defaultFS': 'hdfs://127.0.0.1:9000', 'fileType': 'text',
+    'path': '/oceaninsight/ods/ocean_observation',
+    'fileName': 'ocean_temperature_2017_01',
+    'writeMode': 'nonConflict', 'fieldDelimiter': ',', 'encoding': 'UTF-8',
+    'column': [{'name': name, 'type': 'string'} for name in names],
+}}}]}}
+
+path = Path('/data/oceaninsight/datax/jobs/ocean_temperature_2017_01.json')
+path.write_text(json.dumps(job, ensure_ascii=False, indent=2), encoding='utf-8')
+print(path)
+PY
+</code></pre>
+<p>这段代码只负责生成JSON，没有运行DataX。它显式声明14列，防止列错位。</p>
+<h3 id="9">步骤9：运行海洋单文件作业</h3>
+<p>发送：</p>
+<pre><code class="language-bash">datax /data/oceaninsight/datax/jobs/ocean_temperature_2017_01.json \
+  &gt; /data/oceaninsight/datax/logs/ocean_temperature_2017_01.log 2&gt;&amp;1
+</code></pre>
+<p>该文件只有6,400条，等待重新出现提示符。查看日志：</p>
+<pre><code class="language-bash">tail -n 30 /data/oceaninsight/datax/logs/ocean_temperature_2017_01.log
+</code></pre>
+<p>必须看到读出6,400条、读写失败0条。</p>
+<h3 id="10hdfs">步骤10：验收HDFS海洋冒烟文件</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight/ods/ocean_observation \
+  | grep 'ocean_temperature_2017_01_'
+</code></pre>
+<p>DataX会在文件名前追加或生成随机后缀，因此用前缀查找。发送：</p>
+<pre><code class="language-bash">hdfs dfs -cat \
+  '/oceaninsight/ods/ocean_observation/ocean_temperature_2017_01_*' \
+  | wc -l
+</code></pre>
+<p>必须输出 <code>6400</code>。DataX已跳过CSV的一行表头，所以HDFS只保存业务数据。</p>
+<h2 id="300csv">四、串行写入全部300份海洋CSV</h2>
+<h3 id="11">步骤11：启动海洋批量调度脚本</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup ../.venv/bin/python scripts/cloud/run_datax_ocean_all.py \
+  &gt; /data/oceaninsight/datax/logs/ocean_all_driver.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<p>立即保存PID：</p>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/datax/logs/ocean_all_driver.pid
+</code></pre>
+<p>脚本逐份生成Job和日志，发现刚才成功的2017-01温度文件会跳过，其他299份串行执行。</p>
+<h3 id="12">步骤12：等待并查看海洋入湖任务</h3>
+<p>先等待60秒：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/datax/logs/ocean_all_driver.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 40 /data/oceaninsight/datax/logs/ocean_all_driver.log
+</code></pre>
+<p>看到 <code>DATAX 数字/300</code> 表示仍在处理。继续每隔60秒查看原PID和日志，不要重复启动。最终必须看到：</p>
+<pre><code class="language-text">DATAX_NEW_COMPLETED=299
+DATAX_EXISTING_SKIPPED=1
+HDFS_OCEAN_FILE_COUNT=300
+DATAX_OCEAN_ALL_VERIFY=PASS
+DATAX_OCEAN_ALL_DONE
+</code></pre>
+<p>跳过1份就是步骤9完成的文件，不是漏传。</p>
+<h3 id="13hdfs">步骤13：全量对账海洋HDFS数据</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -cat '/oceaninsight/ods/ocean_observation/*' \
+  | awk -F',' 'NF!=14{bad++} END{print &quot;HDFS_OCEAN_ROWS=&quot; NR; print &quot;HDFS_BAD_COLUMN_ROWS=&quot; bad+0; if(NR==3357840 &amp;&amp; bad==0) print &quot;DATAX_OCEAN_ROWS_VERIFY=PASS&quot;}'
+</code></pre>
+<p>扫描约577.6 MiB数据需要等待。必须看到：</p>
+<pre><code class="language-text">HDFS_OCEAN_ROWS=3357840
+HDFS_BAD_COLUMN_ROWS=0
+DATAX_OCEAN_ROWS_VERIFY=PASS
+</code></pre>
+<h2 id="hdfs">五、把五年船舶活动写入HDFS</h2>
+<h3 id="142017-datax">步骤14：生成并启动2017 DataX作业</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+names = [
+    'observation_date','year','month','year_month','source_grid_lat',
+    'source_grid_lon','grid_lat','grid_lon','grid_id','mmsi','hours',
+    'fishing_hours','quality_flag','source_file','batch_id',
+]
+job = {'job': {'setting': {'speed': {'channel': 1}, 'errorLimit': {'record': 0}},
+'content': [{'reader': {'name': 'txtfilereader', 'parameter': {
+'path': ['/home/ecs-user/oceaninsight-project1/output/ods/vessel/vessel_activity_2017.csv'],
+'encoding': 'UTF-8', 'skipHeader': True, 'fieldDelimiter': ',',
+'column': [{'index': i, 'type': 'string'} for i in range(15)]}},
+'writer': {'name': 'hdfswriter', 'parameter': {
+'defaultFS': 'hdfs://127.0.0.1:9000', 'fileType': 'text',
+'path': '/oceaninsight/ods/vessel_activity', 'fileName': 'vessel_activity_2017',
+'writeMode': 'nonConflict', 'fieldDelimiter': ',', 'encoding': 'UTF-8',
+'column': [{'name': n, 'type': 'string'} for n in names]}}}]}}
+Path('/data/oceaninsight/datax/jobs/vessel_activity_2017.json').write_text(
+    json.dumps(job, ensure_ascii=False, indent=2), encoding='utf-8')
+PY
+</code></pre>
+<p>使用后台方式运行，发送：</p>
+<pre><code class="language-bash">nohup datax /data/oceaninsight/datax/jobs/vessel_activity_2017.json \
+  &gt; /data/oceaninsight/datax/logs/vessel_activity_2017.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<p>立即保存PID：</p>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/datax/logs/vessel_activity_2017.pid
+</code></pre>
+<p>实测约41秒。先等待30秒：</p>
+<pre><code class="language-bash">sleep 30
+</code></pre>
+<p>检查原PID：</p>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/datax/logs/vessel_activity_2017.pid)&quot; -f
+</code></pre>
+<p>查看日志：</p>
+<pre><code class="language-bash">tail -n 30 /data/oceaninsight/datax/logs/vessel_activity_2017.log
+</code></pre>
+<p>必须看到读出2,928,426条、失败0条。</p>
+<h3 id="152017-hdfs">步骤15：验收2017 HDFS文件</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -cat '/oceaninsight/ods/vessel_activity/vessel_activity_2017_*' \
+  | awk -F',' 'NF!=15{bad++} END{print &quot;ROWS=&quot; NR; print &quot;BAD_COLUMNS=&quot; bad+0; if(NR==2928426 &amp;&amp; bad==0) print &quot;DATAX_VESSEL_2017_VERIFY=PASS&quot;}'
+</code></pre>
+<p>必须看到 <code>DATAX_VESSEL_2017_VERIFY=PASS</code>。</p>
+<blockquote>
+<p>不使用 <code>hdfs dfs -cat ... | head</code> 作为正式验收。<code>head</code>读取几行后会主动关闭管道，HDFS可能提示 <code>Unable to write to output stream</code>；这不是文件损坏。</p>
+</blockquote>
+<h3 id="1620182021">步骤16：启动2018—2021批量入湖</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup ../.venv/bin/python scripts/cloud/run_datax_vessel_all.py \
+  &gt; /data/oceaninsight/datax/logs/vessel_all_driver.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/datax/logs/vessel_all_driver.pid
+</code></pre>
+<p>脚本会跳过已有2017，只串行写入其余4年。</p>
+<h3 id="17">步骤17：等待并查看船舶入湖任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/datax/logs/vessel_all_driver.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 40 /data/oceaninsight/datax/logs/vessel_all_driver.log
+</code></pre>
+<p>未完成就继续等待60秒查看原日志。最终必须看到：</p>
+<pre><code class="language-text">DATAX_VESSEL_NEW_COMPLETED=4
+DATAX_VESSEL_EXISTING_SKIPPED=1
+HDFS_VESSEL_FILE_COUNT=5
+DATAX_VESSEL_ALL_VERIFY=PASS
+DATAX_VESSEL_ALL_DONE
+</code></pre>
+<h3 id="18hdfs">步骤18：全量对账五年HDFS活动数据</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -cat '/oceaninsight/ods/vessel_activity/*' \
+  | awk -F',' 'NF!=15{bad++} END{print &quot;HDFS_VESSEL_ROWS=&quot; NR; print &quot;HDFS_BAD_COLUMN_ROWS=&quot; bad+0; if(NR==18638286 &amp;&amp; bad==0) print &quot;DATAX_VESSEL_ROWS_VERIFY=PASS&quot;}'
+</code></pre>
+<p>扫描约2.4 GiB需要几分钟。必须看到18,638,286行、异常列0和 <code>DATAX_VESSEL_ROWS_VERIFY=PASS</code>。</p>
+<h2 id="hdfs_1">六、把船舶主数据写入HDFS</h2>
+<h3 id="1924datax">步骤19：生成24列DataX作业</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+names = [
+'mmsi','year','imo','shipname','callsign','flag_gfw','flag_registry','flag_ais',
+'vessel_class_gfw','vessel_class_registry','vessel_class_inferred',
+'self_reported_fishing_vessel','length_m','tonnage_gt','engine_power_kw',
+'registered_gear_type','inferred_gear_type','registry_public_authorization',
+'registry_data_source','registry_record_id','first_timestamp','last_timestamp',
+'batch_id','source_file']
+job = {'job': {'setting': {'speed': {'channel': 1}, 'errorLimit': {'record': 0}},
+'content': [{'reader': {'name': 'txtfilereader', 'parameter': {
+'path': ['/home/ecs-user/oceaninsight-project1/output/ods/vessel/vessel_master.csv'],
+'encoding': 'UTF-8', 'skipHeader': True, 'fieldDelimiter': ',',
+'column': [{'index': i, 'type': 'string'} for i in range(24)]}},
+'writer': {'name': 'hdfswriter', 'parameter': {
+'defaultFS': 'hdfs://127.0.0.1:9000', 'fileType': 'text',
+'path': '/oceaninsight/ods/vessel_master','fileName': 'vessel_master',
+'writeMode': 'nonConflict','fieldDelimiter': ',','encoding': 'UTF-8',
+'column': [{'name': n, 'type': 'string'} for n in names]}}}]}}
+Path('/data/oceaninsight/datax/jobs/vessel_master.json').write_text(
+json.dumps(job, ensure_ascii=False, indent=2), encoding='utf-8')
+print('VESSEL_MASTER_JOB=READY')
+PY
+</code></pre>
+<p>必须看到 <code>VESSEL_MASTER_JOB=READY</code>。</p>
+<h3 id="20">步骤20：运行并严格验收主数据</h3>
+<p>发送：</p>
+<pre><code class="language-bash">datax /data/oceaninsight/datax/jobs/vessel_master.json \
+  &gt; /data/oceaninsight/datax/logs/vessel_master.log 2&gt;&amp;1
+</code></pre>
+<p>查看日志：</p>
+<pre><code class="language-bash">tail -n 30 /data/oceaninsight/datax/logs/vessel_master.log
+</code></pre>
+<p>应读出149,660条、失败0条。继续发送：</p>
+<pre><code class="language-bash">hdfs dfs -cat '/oceaninsight/ods/vessel_master/vessel_master_*' \
+  | awk -F',' 'NF!=24{badcol++} $23!=&quot;student-vessel-master&quot;{badbatch++} $24!=&quot;vessel_master.csv&quot;{badsource++} END{print &quot;ROWS=&quot; NR; print &quot;BAD_COLUMNS=&quot; badcol+0; print &quot;BAD_BATCH=&quot; badbatch+0; print &quot;BAD_SOURCE=&quot; badsource+0; if(NR==149660 &amp;&amp; badcol==0 &amp;&amp; badbatch==0 &amp;&amp; badsource==0) print &quot;DATAX_VESSEL_MASTER_VERIFY=PASS&quot;}'
+</code></pre>
+<p>必须看到 <code>DATAX_VESSEL_MASTER_VERIFY=PASS</code>。DataX可能静默忽略额外列，所以不能只看“失败0”。</p>
+<h2 id="hiveods">七、创建Hive四层数据库和三张ODS外表</h2>
+<h3 id="21hivesql">步骤21：执行最终Hive建表SQL</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' \
+  -n ecs-user \
+  -f sql/hive/001_layers.sql
+</code></pre>
+<p>SQL会创建 <code>ocean_ods</code>、<code>ocean_dwd</code>、<code>ocean_dws</code>、<code>ocean_ads</code> 四个数据库，以及三张ODS外表。</p>
+<h3 id="22location">步骤22：核对三张表类型和Location</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+  -e &quot;SHOW TABLES IN ocean_ods;&quot;
+</code></pre>
+<p>应看到 <code>ods_ocean_observation</code>、<code>ods_vessel_activity</code>、<code>ods_vessel_master</code>。发送：</p>
+<pre><code class="language-bash">for t in ods_ocean_observation ods_vessel_activity ods_vessel_master; do
+  beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+    --silent=true --showHeader=false --outputformat=tsv2 \
+    -e &quot;DESCRIBE FORMATTED ocean_ods.${t};&quot; \
+    | grep -E 'Table Type:|Location:'
+done
+</code></pre>
+<p>三张表必须是 <code>EXTERNAL_TABLE</code>，Location分别指向三个DataX正式目录。</p>
+<blockquote>
+<p>DataX已经跳过每个CSV表头，Hive表不能再设置 <code>skip.header.line.count</code>，否则每个HDFS文件会误丢第一条业务记录。</p>
+</blockquote>
+<h2 id="sparkods">八、使用Spark全量验收ODS</h2>
+<h3 id="23ods">步骤23：提交ODS验收任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_hive_ods_verify.py \
+  &gt; /data/oceaninsight/logs/spark_hive_ods_verify.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/spark_hive_ods_verify.pid
+</code></pre>
+<h3 id="24ods">步骤24：等待ODS验收完成</h3>
+<p>先等待60秒，再检查：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/spark_hive_ods_verify.pid)&quot; -f
+tail -n 60 /data/oceaninsight/logs/spark_hive_ods_verify.log
+</code></pre>
+<p>PID仍在且没有异常就继续等待60秒。最终必须看到海洋3,357,840、船舶18,638,286、主数据149,660，各类异常为0，以及：</p>
+<pre><code class="language-text">SPARK_HIVE_ODS_VERIFY=PASS
+</code></pre>
+<h2 id="dwd">九、构建DWD清洗层</h2>
+<h3 id="25dwd">步骤25：提交DWD任务</h3>
+<p>只有ODS PASS后发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_build_dwd.py \
+  &gt; /data/oceaninsight/logs/spark_build_dwd.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/spark_build_dwd.pid
+</code></pre>
+<h3 id="26dwd-pass">步骤26：等待DWD PASS</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/spark_build_dwd.pid)&quot; -f
+tail -n 60 /data/oceaninsight/logs/spark_build_dwd.log
+</code></pre>
+<p>日志阶段标题只代表正在处理，不代表完成。最终必须看到：</p>
+<pre><code class="language-text">DWD_OCEAN_ROWS=2687015
+DWD_VESSEL_ROWS=18638286
+DWD_MASTER_ROWS=149660
+DWD_MASTER_DISTINCT_KEYS=149660
+SPARK_DWD_BUILD=PASS
+</code></pre>
+<p>海洋DWD剔除了670,825条明确标记为 <code>MISSING</code> 的记录；船舶活动全部有效，行数不变。</p>
+<h2 id="dws">十、构建DWS汇总层</h2>
+<h3 id="27dws">步骤27：提交DWS任务</h3>
+<p>只有DWD PASS后发送：</p>
+<pre><code class="language-bash">nohup env JAVA_HOME=/usr/lib/jvm/java-17 \
+  spark-submit scripts/cloud/spark_build_dws.py \
+  &gt; /data/oceaninsight/logs/spark_build_dws.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/spark_build_dws.pid
+</code></pre>
+<h3 id="28dws-pass">步骤28：等待DWS PASS</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+ps -p &quot;$(cat /data/oceaninsight/logs/spark_build_dws.pid)&quot; -f
+tail -n 80 /data/oceaninsight/logs/spark_build_dws.log
+</code></pre>
+<p>未完成时继续等待60秒并查看原日志。最终必须看到：</p>
+<pre><code class="language-text">DWS_OCEAN_ROWS=721200
+DWS_OCEAN_DISTINCT_KEYS=721200
+DWS_OCEAN_DETAIL_ROWS=2687015
+DWS_VESSEL_ROWS=7404
+DWS_VESSEL_DISTINCT_KEYS=7404
+DWS_VESSEL_DETAIL_ROWS=18638286
+SPARK_DWS_BUILD=PASS
+</code></pre>
+<h2 id="3">十一、第3天最终验收</h2>
+<h3 id="29dwddws">步骤29：查看DWD和DWS表</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+  -e &quot;SHOW TABLES IN ocean_dwd; SHOW TABLES IN ocean_dws;&quot;
+</code></pre>
+<p>应看到3张DWD表和2张DWS表。</p>
+<h3 id="30">步骤30：检查表格式与服务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' -n ecs-user \
+  --silent=true --showHeader=false --outputformat=tsv2 \
+  -e &quot;DESCRIBE FORMATTED ocean_dws.dws_ocean_monthly_grid;&quot; \
+  | grep -E 'Table Type:|InputFormat:|Location:'
+</code></pre>
+<p>本机实测Spark注册结果为 <code>EXTERNAL_TABLE</code>、Parquet和正确HDFS Location；不要把 <code>MANAGED_TABLE</code> 当作通过条件。</p>
+<p>发送：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<pre><code class="language-bash">df -h /
+</code></pre>
+<p>确认NameNode、DataNode、Hive进程仍在，磁盘空间充足。</p>
+<h2 id="3_1">十二、第3天验收表</h2>
+<table>
+<thead>
+<tr>
+<th>验收项</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>海洋DataX</td>
+<td>HDFS 300文件、3,357,840行、14列异常0</td>
+</tr>
+<tr>
+<td>船舶活动DataX</td>
+<td>HDFS 5文件、18,638,286行、15列异常0</td>
+</tr>
+<tr>
+<td>船舶主数据DataX</td>
+<td>149,660行、24列及血缘异常0</td>
+</tr>
+<tr>
+<td>Hive ODS</td>
+<td>3张外表指向正确HDFS目录</td>
+</tr>
+<tr>
+<td>Spark ODS验收</td>
+<td><code>SPARK_HIVE_ODS_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>DWD</td>
+<td>2,687,015海洋、18,638,286活动、149,660主数据，PASS</td>
+</tr>
+<tr>
+<td>DWS</td>
+<td>721,200海洋、7,404船舶，明细完整回卷，PASS</td>
+</tr>
+</tbody>
+</table>
+<p>全部通过后，第3天完成。不要删除HDFS数据、Hive表、Spark日志、DataX Job或日志；第4天将在DWS基础上构建ADS、发布MariaDB并导出最终CSV。</p>
+</div>
+</body>
+</html>

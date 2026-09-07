@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1天：购买 ECS 与安装完整环境</title>
+<style>
+
+:root {
+    --c-primary: #0d3b66;
+    --c-primary-light: #1a5276;
+    --c-accent: #2980b9;
+    --c-text: #2c3e50;
+    --c-muted: #5d6d7e;
+    --c-bg: #ffffff;
+    --c-bg-soft: #f8f9fa;
+    --c-border: #e1e5ea;
+    --c-code-bg: #1e2b3a;
+    --c-code-text: #ecf0f1;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 56px 80px 56px;
+    background: #fff;
+}
+.doc-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--c-primary);
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--c-primary);
+    line-height: 1.3;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--c-primary-light);
+    line-height: 1.4;
+    page-break-after: avoid;
+}
+h1 {
+    font-size: 26px;
+    color: var(--c-primary);
+    border-bottom: 2.5px solid var(--c-primary);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+}
+h2 {
+    font-size: 21px;
+    color: var(--c-primary);
+    border-left: 5px solid var(--c-accent);
+    padding-left: 12px;
+    margin: 28px 0 12px;
+}
+h3 {
+    font-size: 17px;
+    color: var(--c-primary-light);
+    margin: 20px 0 8px;
+}
+h4 { font-size: 15px; color: var(--c-accent); margin: 16px 0 6px; }
+p { margin: 8px 0; text-align: justify; }
+pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+code {
+    background: #f0f3f6;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+li code { font-size: 12.5px; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #cfd8dc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+th {
+    background: linear-gradient(180deg, var(--c-accent) 0%, var(--c-primary-light) 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+tr:nth-child(even) td { background: #f4f8fb; }
+blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border-left: 5px solid #f39c12;
+    color: #7d5d00;
+    border-radius: 4px;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { margin: 8px 0; padding-left: 28px; }
+li { margin: 4px 0; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px dashed var(--c-accent); }
+a:hover { color: var(--c-primary); border-bottom-style: solid; }
+strong { color: #c0392b; font-weight: 700; }
+em { color: #8e44ad; font-style: italic; }
+hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+    margin: 24px 0;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.topbar {
+    background: var(--c-primary);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="topbar">OceanInsight  学生实训教程</div>
+<div class="container">
+<h1 class="doc-title">第1天：购买 ECS 与安装完整环境</h1>
+<h1 id="1-ecs">第1天：购买 ECS 与安装完整环境</h1>
+<p>版本：学生实操版 V1.0<br>
+适用环境：Alibaba Cloud Linux 4、4 vCPU、8 GiB 内存、100 GiB 系统盘<br>
+今日目标：完成 Java 11、Hadoop 3.3.6、MariaDB 10.6、Hive 4.0.1、Java 17、Spark 4.2.0 和 DataX 202308 的安装与联通验证。</p>
+<blockquote>
+<p>文档说明：请从步骤1开始顺序执行，不要跳步。每个步骤都写明了“为什么做、复制什么、看到什么才算成功”。曾经实操遇到的问题已改成正确配置直接放在对应步骤中，不要求学生先执行错误操作。</p>
+</blockquote>
+<h2 id="_1">一、开始前先认识今天的服务器</h2>
+<p>项目一使用一台单节点 ECS。HDFS 保存数据文件；MariaDB 同时保存 Hive 元数据和最终 ADS 结果；Hive 提供数仓表；Spark 完成清洗与汇总；DataX 负责把 CSV 写入 HDFS。</p>
+<p>今天只搭环境，不处理全量业务数据。不要开放3306、9000、9083、10000等端口到公网。</p>
+<h2 id="ecs">二、购买 ECS</h2>
+<h3 id="1-ecs_1">步骤1：进入 ECS 自定义购买页</h3>
+<p>登录阿里云控制台，进入“云服务器 ECS”，单击“创建实例”，选择“自定义购买”。</p>
+<p>自定义购买允许我们固定 CPU、内存、系统、磁盘和网络。不要使用配置过低的快速购买模板。</p>
+<h3 id="2">步骤2：选择计费方式和地域</h3>
+<p>教学实验建议选择“按量付费”。地域选择离自己较近的中国内地地域；本项目实测使用广州地域。</p>
+<p>按量付费实例不用时可以选择“节省停机模式”。停止后计算资源不再计费，但云盘仍可能产生少量费用。不要点击“释放实例”。</p>
+<h3 id="3">步骤3：选择实例规格</h3>
+<p>选择：</p>
+<pre><code class="language-text">4 vCPU
+8 GiB 内存
+x86_64
+</code></pre>
+<p>不要选择2核4G。本项目同机运行 HDFS、Hive、Spark、DataX 和 MariaDB，4G内存容易出现进程被系统杀死。</p>
+<h3 id="4">步骤4：选择操作系统和系统盘</h3>
+<p>选择公共镜像：</p>
+<pre><code class="language-text">Alibaba Cloud Linux 4
+x86_64
+</code></pre>
+<p>系统盘选择 ESSD，容量填写：</p>
+<pre><code class="language-text">100 GiB
+</code></pre>
+<p>实测全链路完成后系统盘约使用19 GiB，100 GiB 能保留中间数据、日志和备份。</p>
+<h3 id="5">步骤5：设置网络和登录用户</h3>
+<p>使用默认 VPC 和交换机，分配公网 IPv4。登录用户选择：</p>
+<pre><code class="language-text">ecs-user
+</code></pre>
+<p>“登录凭据”就是服务器确认登录者身份的方法。为了让全班操作一致，本实验统一选择：</p>
+<pre><code class="language-text">登录凭据：自定义密码
+登录用户名：ecs-user
+</code></pre>
+<p>按照页面要求设置 ECS 登录密码，并由学生本人妥善保存。这个密码只用于登录服务器，不是后面创建的 MariaDB 密码；不要把密码写进实验报告、截图或聊天记录。</p>
+<p>安全组使用购买页面自动创建或默认选中的“普通安全组”即可，不要求学生自己填写安全组名称，也不在购买页面手工增加规则。后面会先清空它的入方向规则，再由 Workbench 自动添加正确规则。</p>
+<h3 id="6">步骤6：创建实例并清空入方向规则</h3>
+<p>确认配置后创建实例。返回实例列表，等待：</p>
+<pre><code class="language-text">实例状态：运行中
+健康状态：正常
+</code></pre>
+<p>实例开始运行后，先不要登录 Workbench。按照下面的顺序打开安全组：</p>
+<pre><code class="language-text">ECS控制台
+→ 实例
+→ 找到刚创建的实例
+→ 单击实例ID
+→ 安全组
+→ 单击当前实例关联的安全组
+→ 管理规则
+→ 入方向
+</code></pre>
+<p>确认当前选中的是“入方向”，勾选列表中的全部入方向规则，单击“批量删除”，再确认删除。删除完成后，入方向列表应显示0条规则。</p>
+<pre><code class="language-text">访问规则（0条）
+</code></pre>
+<p>这里说的“全部删除”只指当前页面的入方向规则：不要删除安全组本身，不要进入“出方向”执行删除，也不要解绑实例和安全组。入方向暂时为0条是正常状态，下一步由 Workbench 自动补回唯一需要的SSH规则。<br>
+<img alt="" src="3f7a20d92ebdfffce9aa92988261fe3e 1.png"><br>
+<img alt="" src="c2727a65b1eb11906e28d9ef8109df61.png"></p>
+<p><img alt="" src="62540fe00a3c175a925d4394bc3d6793.png"></p>
+<p><img alt="" src="91902bcef5c63ee7056117a7104b8c76.png"><br>
+<img alt="" src="2d91b0e5fed8f0dd37c494a1237fd23e 1.png"><br>
+<img alt="" src="7d503620f1bb7b57d22b9f0615a81329.png"></p>
+<h2 id="workbench">三、登录 Workbench 并检查服务器</h2>
+<h3 id="7-workbench">步骤7：打开 Workbench</h3>
+<p>在实例操作列单击“远程连接”，找到“通过 Workbench 远程连接”，单击“立即登录”。使用 <code>ecs-user</code> 登录。</p>
+<p>因为刚才已经清空入方向规则，页面会提示需要添加安全组规则或放行 Workbench IP。直接单击“一键添加”或“添加规则”，让 Workbench 自动完成，不要自己填写IP地址和端口。</p>
+<p>如果页面要求输入连接信息，填写：</p>
+<pre><code class="language-text">用户名：ecs-user
+认证方式：密码认证
+密码：购买 ECS 时设置的登录密码
+端口：22
+</code></pre>
+<p>看到类似下面的提示符，说明已经进入服务器：</p>
+<pre><code class="language-text">[ecs-user@主机名 ~]$
+</code></pre>
+<p>如果提示符以 <code>root@</code> 开头，请退出并重新使用 <code>ecs-user</code> 登录。后续学生文件全部归 <code>ecs-user</code> 所有。</p>
+<p>登录成功后返回“安全组 → 管理规则 → 入方向”检查。最终应当只有 Workbench 自动添加的这一条：</p>
+<pre><code class="language-text">允许｜优先级1｜自定义TCP｜100.104.0.0/16｜SSH(22)
+</code></pre>
+<p>如果与上面一致，安全组配置完成，不再修改。<code>100.104.0.0/16</code> 是 Workbench 私网连接使用的来源范围，不是面向整个公网的 <code>0.0.0.0/0</code>。</p>
+<blockquote>
+<p>为什么项目一只需要这一条：学生只需要通过Workbench的SSH 22进入服务器。MariaDB 3306、HDFS 9000、Hive Metastore 9083和HiveServer2 10000都在同一台ECS内部通信，不需要添加公网入方向规则。</p>
+</blockquote>
+<h3 id="8">步骤8：确认当前用户</h3>
+<p>发送：</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<p>这条命令用于确认当前登录身份。</p>
+<p>预期输出：</p>
+<pre><code class="language-text">ecs-user
+</code></pre>
+<h3 id="9-cpu">步骤9：检查 CPU</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nproc
+</code></pre>
+<p><code>nproc</code> 会显示操作系统可见的 CPU 核心数。</p>
+<p>预期输出：</p>
+<pre><code class="language-text">4
+</code></pre>
+<h3 id="10">步骤10：检查内存和磁盘</h3>
+<p>发送：</p>
+<pre><code class="language-bash">free -h
+</code></pre>
+<p>预期可用总内存约7.3 GiB。继续发送：</p>
+<pre><code class="language-bash">df -h /
+</code></pre>
+<p>预期系统盘总容量约99 GiB。云盘标称100 GiB，格式化后显示约99 GiB是正常现象。</p>
+<h3 id="11-python">步骤11：检查系统和 Python</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cat /etc/os-release | head -n 5
+</code></pre>
+<p>输出中应包含 Alibaba Cloud Linux 4。继续发送：</p>
+<pre><code class="language-bash">python3 --version
+</code></pre>
+<p>实测版本为：</p>
+<pre><code class="language-text">Python 3.11.6
+</code></pre>
+<h2 id="_2">四、认识并上传项目一学生包</h2>
+<p>本项目采用“西北太平洋五年期轻量化方案”，不是把原始全球海洋与船舶数据全部上传到个人 ECS。教学数据已经按下列范围裁剪：</p>
+<pre><code class="language-text">时间：2017—2021年，共5年
+空间：西北太平洋，10°N—50°N、120°E—160°E
+海洋数据：300个NC文件，覆盖60个月和5项指标
+船舶数据：2017—2021年5个年度ZIP，每年抽取1、4、7、10月
+</code></pre>
+<p>这样仍然保留 NC、NPZ、ZIP 内 CSV 等真实异构格式，也能完整练习转换、DataX、Hive、Spark和MariaDB，同时把数据量控制在4核8G学生服务器能够完成的范围内。</p>
+<p>学生正式使用两个 ZIP，每个 ZIP 都配有一个同名 SHA256 校验文件：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>里面是什么</th>
+<th>为什么要上传</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OceanInsight-project1-source.zip</code></td>
+<td>300个裁剪NC、NPZ教学样本、5个年度船舶ZIP、匹配后的船舶主数据和源数据清单</td>
+<td>它是学生真正要解析和转换的数据输入；第2天开始使用</td>
+</tr>
+<tr>
+<td><code>OceanInsight-project1-source.sha256</code></td>
+<td><code>source.zip</code>的数字指纹</td>
+<td>检查大文件上传后有没有损坏</td>
+</tr>
+<tr>
+<td><code>OceanInsight-project1-starter.zip</code></td>
+<td>Python项目骨架、5个TODO、测试、配置模板、DataX模板、Hive/MariaDB SQL和云端运行脚本</td>
+<td>学生在这个代码包中补TODO，并用其中脚本完成四天全链路；第1天安装环境时就要读取配置模板</td>
+</tr>
+<tr>
+<td><code>OceanInsight-project1-starter.sha256</code></td>
+<td><code>starter.zip</code>的数字指纹</td>
+<td>检查代码包上传后有没有损坏</td>
+</tr>
+</tbody>
+</table>
+<p>Starter 不是答案包。它保留5处必须由学生完成的TODO，不包含教师答案；<code>solution.zip</code>只由教师保管，不发给学生。</p>
+<h3 id="12-sourcestarter">步骤12：上传 Source、Starter 和两个校验文件</h3>
+<p>第1天就把四个学生文件一次上传完：</p>
+<pre><code class="language-text">OceanInsight-project1-source.zip
+OceanInsight-project1-source.sha256
+OceanInsight-project1-starter.zip
+OceanInsight-project1-starter.sha256
+</code></pre>
+<p>在 Workbench 左侧打开文件管理器，进入 <code>/home/ecs-user</code>，新建目录：</p>
+<pre><code class="language-text">oceaninsight-project1/packages
+</code></pre>
+<p>把四个文件上传到该目录。<code>source.zip</code>约208 MiB，上传时间会比Starter长；文件任务中心显示绿色“完成”后再继续。关闭文件任务中心或刷新页面前，必须先确认四个文件都完成。</p>
+<h3 id="13-source-starter">步骤13：校验 Source 和 Starter</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/packages
+</code></pre>
+<p>这条命令把当前目录切换到上传目录。继续发送：</p>
+<pre><code class="language-bash">sha256sum -c OceanInsight-project1-source.sha256
+</code></pre>
+<p>预期输出：</p>
+<pre><code class="language-text">OceanInsight-project1-source.zip: OK
+</code></pre>
+<p>继续发送：</p>
+<pre><code class="language-bash">sha256sum -c OceanInsight-project1-starter.sha256
+</code></pre>
+<p>SHA256 用于确认文件没有在上传过程中损坏。两个校验必须都出现 <code>OK</code>；如果显示 <code>FAILED</code>，不要解压，重新上传对应ZIP后再校验。</p>
+<p>预期输出：</p>
+<pre><code class="language-text">OceanInsight-project1-starter.zip: OK
+</code></pre>
+<h3 id="14-starter">步骤14：通过临时目录完整解压 Starter</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1
+</code></pre>
+<p>先确认正式目录还不存在：</p>
+<pre><code class="language-bash">test ! -e starter &amp;&amp; echo 'STARTER_TARGET_READY=YES'
+</code></pre>
+<p>必须看到 <code>STARTER_TARGET_READY=YES</code>。继续发送下面的完整代码块：</p>
+<pre><code class="language-bash">(
+  set -e
+  STARTER_STAGE=$(mktemp -d \
+    /home/ecs-user/oceaninsight-project1/starter_extracting.XXXXXX)
+  python3 -m zipfile -e \
+    packages/OceanInsight-project1-starter.zip \
+    &quot;$STARTER_STAGE&quot;
+  test -f &quot;$STARTER_STAGE/pyproject.toml&quot;
+  test -d &quot;$STARTER_STAGE/conf/cloud-final&quot;
+  test &quot;$(find &quot;$STARTER_STAGE/conf/cloud-final&quot; -maxdepth 1 -type f | wc -l)&quot; -eq 8
+  touch &quot;$STARTER_STAGE/.extract_verify&quot;
+  mv &quot;$STARTER_STAGE&quot; starter
+  echo 'STARTER_EXTRACT_VERIFY=PASS'
+)
+</code></pre>
+<p>必须看到 <code>STARTER_EXTRACT_VERIFY=PASS</code>。Alibaba Cloud Linux 4可能没有 <code>unzip</code>，因此使用Python标准库。先解压到随机临时目录，全部检查通过后才改名为 <code>starter</code>；即使Workbench中断，也不会把半成品误认为正式目录。</p>
+<p>验证配置模板：</p>
+<pre><code class="language-bash">find starter/conf/cloud-final -maxdepth 1 -type f -printf '%f\n' | sort
+</code></pre>
+<p>预期至少看到 Hadoop、Hive、Spark、DataX 和两个 systemd service 模板。</p>
+<h2 id="java-11-mariadb">五、安装基础软件、Java 11 和 MariaDB</h2>
+<h3 id="15">步骤15：安装基础软件</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo dnf -y install python3 python3-pip curl wget tar gzip rsync openssl
+</code></pre>
+<p>这些工具分别用于 Python 环境、下载、解压、同步文件和生成随机密码。</p>
+<p>看到 <code>Complete!</code> 表示安装完成。</p>
+<h3 id="16-java-11">步骤16：安装 Java 11</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo dnf -y install java-11-openjdk-devel
+</code></pre>
+<p>Hadoop、Hive 和 DataX 使用 Java 11。安装完成后发送：</p>
+<pre><code class="language-bash">java -version
+</code></pre>
+<p>预期第一行包含 Java 11。继续建立固定路径：</p>
+<pre><code class="language-bash">JAVA11_HOME=$(dirname &quot;$(dirname &quot;$(readlink -f &quot;$(command -v java)&quot;)&quot;)&quot;)
+</code></pre>
+<p>这条命令自动找到当前 Java 11 的真实安装目录，并保存到临时变量。发送：</p>
+<pre><code class="language-bash">sudo ln -sfn &quot;$JAVA11_HOME&quot; /opt/java
+</code></pre>
+<p>后续组件统一使用 <code>/opt/java</code>，避免依赖带补丁号的目录名。</p>
+<h3 id="17-mariadb">步骤17：安装并启动 MariaDB</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo dnf -y install mariadb-server
+</code></pre>
+<p>继续发送：</p>
+<pre><code class="language-bash">sudo systemctl enable --now mariadb
+</code></pre>
+<p><code>enable</code> 表示开机启动，<code>--now</code> 表示现在立刻启动。验证：</p>
+<pre><code class="language-bash">sudo systemctl is-active mariadb
+</code></pre>
+<p>预期输出：</p>
+<pre><code class="language-text">active
+</code></pre>
+<h3 id="18">步骤18：建立私有密码目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mkdir -p &quot;$HOME/.config/oceaninsight&quot;
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">chmod 700 &quot;$HOME/.config/oceaninsight&quot;
+</code></pre>
+<p>该目录只允许 <code>ecs-user</code> 自己访问。</p>
+<h3 id="19">步骤19：生成数据库随机密码</h3>
+<p>发送：</p>
+<pre><code class="language-bash">HIVE_DB_PASSWORD=$(openssl rand -base64 24 | tr -d '\n')
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">ADS_DB_PASSWORD=$(openssl rand -base64 24 | tr -d '\n')
+</code></pre>
+<p>密码只保存在当前 Shell 变量中，命令不会把密码打印到屏幕。</p>
+<h3 id="20">步骤20：创建数据库和本地账户</h3>
+<p>发送以下完整代码块：</p>
+<pre><code class="language-bash">sudo mariadb &lt;&lt;SQL
+CREATE DATABASE IF NOT EXISTS hive_metastore
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS ocean_insight_ads
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'hive_user'@'localhost'
+  IDENTIFIED BY '${HIVE_DB_PASSWORD}';
+CREATE USER IF NOT EXISTS 'ads_writer'@'localhost'
+  IDENTIFIED BY '${ADS_DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON hive_metastore.*
+  TO 'hive_user'@'localhost';
+GRANT ALL PRIVILEGES ON ocean_insight_ads.*
+  TO 'ads_writer'@'localhost';
+FLUSH PRIVILEGES;
+SQL
+</code></pre>
+<p>两个账户都只允许 <code>localhost</code> 登录，数据库没有对公网开放。</p>
+<h3 id="21600-cnf">步骤21：写入权限600的私有 CNF</h3>
+<p>发送：</p>
+<pre><code class="language-bash">umask 077
+</code></pre>
+<p><code>umask 077</code> 保证新文件默认只有本人可读写。发送：</p>
+<pre><code class="language-bash">printf '[client]\nhost=127.0.0.1\nport=3306\nuser=hive_user\npassword=%s\n' \
+  &quot;$HIVE_DB_PASSWORD&quot; &gt; &quot;$HOME/.config/oceaninsight/hive-db.cnf&quot;
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">printf '[client]\nhost=127.0.0.1\nport=3306\nuser=ads_writer\npassword=%s\n' \
+  &quot;$ADS_DB_PASSWORD&quot; &gt; &quot;$HOME/.config/oceaninsight/ads-db.cnf&quot;
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">chmod 600 &quot;$HOME/.config/oceaninsight/hive-db.cnf&quot; \
+  &quot;$HOME/.config/oceaninsight/ads-db.cnf&quot;
+</code></pre>
+<p>立即清除临时变量：</p>
+<pre><code class="language-bash">unset HIVE_DB_PASSWORD ADS_DB_PASSWORD
+</code></pre>
+<p>不要执行 <code>cat ~/.config/oceaninsight/*.cnf</code>。只检查权限：</p>
+<pre><code class="language-bash">stat -c '%a %n' &quot;$HOME/.config/oceaninsight/&quot;*.cnf
+</code></pre>
+<p>两个文件都必须显示 <code>600</code>。</p>
+<h2 id="hadoop-336">六、安装 Hadoop 3.3.6</h2>
+<h3 id="22-hadoop">步骤22：下载 Hadoop 主包</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 3 \
+  -o hadoop-3.3.6.tar.gz \
+  http://mirrors.cloud.aliyuncs.com/apache/hadoop/core/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+</code></pre>
+<p>广州 ECS 实测使用阿里云 VPC 镜像速度稳定。不要从 <code>archive.apache.org</code> 下载约696 MiB主包，实测可能只有约12 KiB/s。</p>
+<h3 id="23-sha512">步骤23：下载并校验 SHA512</h3>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 3 \
+  -o hadoop-3.3.6.tar.gz.sha512 \
+  https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz.sha512
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sed 's/hadoop-3.3.6-RC1.tar.gz/hadoop-3.3.6.tar.gz/' \
+  hadoop-3.3.6.tar.gz.sha512 | sha512sum -c -
+</code></pre>
+<p>官方校验文件内部名称带 <code>RC1</code>，正式包名不带。这里先替换文件名再校验，避免学生看到假失败。</p>
+<p>预期输出：</p>
+<pre><code class="language-text">hadoop-3.3.6.tar.gz: OK
+</code></pre>
+<h3 id="24">步骤24：解压并建立固定软链接</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tar -xzf hadoop-3.3.6.tar.gz -C /opt
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo ln -sfn /opt/hadoop-3.3.6 /opt/hadoop
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /opt/hadoop-3.3.6
+</code></pre>
+<h3 id="25-hadoop">步骤25：配置 Hadoop 环境变量</h3>
+<p>发送以下代码块：</p>
+<pre><code class="language-bash">sudo tee /etc/profile.d/oceaninsight-hadoop.sh &gt;/dev/null &lt;&lt;'EOF'
+export JAVA_HOME=/opt/java
+export HADOOP_HOME=/opt/hadoop
+export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+EOF
+</code></pre>
+<p>让当前终端立即生效：</p>
+<pre><code class="language-bash">source /etc/profile.d/oceaninsight-hadoop.sh
+</code></pre>
+<p>验证：</p>
+<pre><code class="language-bash">hadoop version | head -n 1
+</code></pre>
+<p>预期输出包含 <code>Hadoop 3.3.6</code>。</p>
+<h3 id="26-hdfs">步骤26：创建 HDFS 本地数据目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo mkdir -p /data/oceaninsight/hdfs/{namenode,datanode,tmp,logs,pids}
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /data/oceaninsight
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">chmod 750 /data/oceaninsight
+</code></pre>
+<h3 id="27-hdfs">步骤27：复制 HDFS 最终配置</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cp starter/conf/cloud-final/hadoop-core-site.xml \
+  /opt/hadoop/etc/hadoop/core-site.xml
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">cp starter/conf/cloud-final/hadoop-hdfs-site.xml \
+  /opt/hadoop/etc/hadoop/hdfs-site.xml
+</code></pre>
+<p>这两个文件已经包含实测成功参数：HDFS地址 <code>localhost:9000</code>、副本1、独立 NameNode/DataNode 目录和仅本机开放的9870管理端口。</p>
+<h3 id="28-hadoop">步骤28：追加 Hadoop 进程参数</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cat &gt;&gt; /opt/hadoop/etc/hadoop/hadoop-env.sh &lt;&lt;'EOF'
+export JAVA_HOME=/opt/java
+export HADOOP_LOG_DIR=/data/oceaninsight/hdfs/logs
+export HADOOP_PID_DIR=/data/oceaninsight/hdfs/pids
+export HADOOP_HEAPSIZE_MAX=512
+EOF
+</code></pre>
+<p><code>HADOOP_HEAPSIZE_MAX=512</code> 限制 Hadoop 堆内存，给同机 Hive、Spark 和 MariaDB 留出空间。</p>
+<h3 id="29-namenode">步骤29：首次且仅首次格式化 NameNode</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs namenode -format oceaninsight
+</code></pre>
+<p>这是今天唯一一次允许执行格式化。格式化工具末尾出现 <code>SHUTDOWN_MSG: Shutting down NameNode</code> 是正常结束，不是失败。</p>
+<blockquote>
+<p>安全红线：从明天开始，任何情况下都不要再次执行 <code>hdfs namenode -format</code>。重复格式化会让现有 HDFS 元数据失效。</p>
+</blockquote>
+<h3 id="30-namenode-datanode">步骤30：启动 NameNode 和 DataNode</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs --daemon start namenode
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs --daemon start datanode
+</code></pre>
+<p>等待5秒：</p>
+<pre><code class="language-bash">sleep 5
+</code></pre>
+<p>验证进程：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<p>预期至少看到：</p>
+<pre><code class="language-text">NameNode
+DataNode
+Jps
+</code></pre>
+<h3 id="31-hdfs">步骤31：创建项目 HDFS 目录</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -mkdir -p \
+  /oceaninsight/raw \
+  /oceaninsight/ods \
+  /oceaninsight/dwd \
+  /oceaninsight/dws \
+  /oceaninsight/ads \
+  /oceaninsight/tmp \
+  /oceaninsight/warehouse
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight
+</code></pre>
+<p>必须能列出刚创建的目录。</p>
+<h2 id="hive-401">七、安装 Hive 4.0.1</h2>
+<h3 id="32-hive">步骤32：下载 Hive</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 5 --retry-delay 3 \
+  -o apache-hive-4.0.1-bin.tar.gz \
+  https://mirrors.huaweicloud.com/apache/hive/hive-4.0.1/apache-hive-4.0.1-bin.tar.gz
+</code></pre>
+<p>华为镜像是本项目实测成功路线，约1.2 MiB/s。等待当前命令完成，不要同时启动第二个下载任务。</p>
+<h3 id="33-hive">步骤33：下载校验文件并校验 Hive</h3>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 3 \
+  -o apache-hive-4.0.1-bin.tar.gz.sha256 \
+  https://downloads.apache.org/hive/hive-4.0.1/apache-hive-4.0.1-bin.tar.gz.sha256
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sha256sum -c apache-hive-4.0.1-bin.tar.gz.sha256
+</code></pre>
+<p>只有看到 <code>OK</code> 才继续。</p>
+<h3 id="34-hive">步骤34：解压 Hive 并建立软链接</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tar -xzf apache-hive-4.0.1-bin.tar.gz -C /opt
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo ln -sfn /opt/apache-hive-4.0.1-bin /opt/hive
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /opt/apache-hive-4.0.1-bin
+</code></pre>
+<h3 id="35-mysql-connectorj-840">步骤35：安装 MySQL Connector/J 8.4.0</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 3 \
+  -o mysql-connector-j-8.4.0.jar \
+  https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/mysql-connector-j-8.4.0.jar
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">cp mysql-connector-j-8.4.0.jar /opt/hive/lib/
+</code></pre>
+<p>该驱动让 Hive Metastore 和后续 Spark JDBC 能连接 MariaDB。</p>
+<h3 id="36-hive">步骤36：配置 Hive 环境变量</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tee /etc/profile.d/oceaninsight-hive.sh &gt;/dev/null &lt;&lt;'EOF'
+export HIVE_HOME=/opt/hive
+export HIVE_CONF_DIR=/opt/hive/conf
+export PATH=$HIVE_HOME/bin:$PATH
+EOF
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">source /etc/profile.d/oceaninsight-hive.sh
+</code></pre>
+<h3 id="37-hive">步骤37：复制 Hive 最终配置模板</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cp starter/conf/cloud-final/hive-site.xml /opt/hive/conf/hive-site.xml
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">cp starter/conf/cloud-final/metastore-site.xml /opt/hive/conf/metastore-site.xml
+</code></pre>
+<p>模板已经预先包含两个通知接口兼容键。缺少兼容键时 HiveServer2 可能显示 active，却每60秒重试且不监听10000端口。</p>
+<h3 id="38-hive">步骤38：将私有密码写入 Hive 配置</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import configparser
+from pathlib import Path
+
+cnf = Path.home() / '.config/oceaninsight/hive-db.cnf'
+site = Path('/opt/hive/conf/hive-site.xml')
+
+config = configparser.RawConfigParser()
+if not config.read(cnf, encoding='utf-8'):
+    raise SystemExit('无法读取 hive-db.cnf')
+
+password = config['client']['password']
+text = site.read_text(encoding='utf-8')
+marker = '__REDACTED_PASSWORD__'
+if marker not in text:
+    raise SystemExit('Hive模板中未找到密码占位符')
+
+site.write_text(text.replace(marker, password), encoding='utf-8')
+print('HIVE_PASSWORD_INJECT=PASS')
+PY
+</code></pre>
+<p>脚本只从权限600的 CNF 读取密码并替换占位符，不打印密码。看到 <code>HIVE_PASSWORD_INJECT=PASS</code> 即可。</p>
+<p>立即限制两个Hive配置文件的权限：</p>
+<pre><code class="language-bash">chmod 600 /opt/hive/conf/hive-site.xml \
+  /opt/hive/conf/metastore-site.xml
+</code></pre>
+<pre><code class="language-bash">stat -c '%a %U %n' /opt/hive/conf/hive-site.xml \
+  /opt/hive/conf/metastore-site.xml
+</code></pre>
+<p>两个文件都必须显示权限 <code>600</code>、所有者 <code>ecs-user</code>。</p>
+<h3 id="39-hive-metastore">步骤39：初始化 Hive Metastore</h3>
+<p>发送：</p>
+<pre><code class="language-bash">/opt/hive/bin/schematool -dbType mysql -initSchema
+</code></pre>
+<p>预期关键输出：</p>
+<pre><code class="language-text">Initialization script completed
+schemaTool completed
+</code></pre>
+<p>MariaDB 中约83张元数据表、Schema版本4.0.0与 Hive 4.0.1 发行包兼容。</p>
+<h3 id="40-hive-systemd">步骤40：安装 Hive 两个 systemd 服务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo mkdir -p /data/oceaninsight/hive/{logs,pids}
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /data/oceaninsight/hive
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo cp starter/conf/cloud-final/oceaninsight-hive-metastore.service \
+  /etc/systemd/system/
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo cp starter/conf/cloud-final/oceaninsight-hiveserver2.service \
+  /etc/systemd/system/
+</code></pre>
+<p>HiveServer2 模板已经把 PID 写到 <code>/data/oceaninsight/hive/pids</code>，不会尝试写入只允许 root 修改的 <code>/opt/hive/conf</code>。</p>
+<h3 id="41-metastore">步骤41：启动 Metastore</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo systemctl enable --now oceaninsight-hive-metastore
+</code></pre>
+<p>等待10秒：</p>
+<pre><code class="language-bash">sleep 10
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo ss -lntp | grep ':9083'
+</code></pre>
+<p>看到 <code>127.0.0.1:9083</code> 才继续。</p>
+<h3 id="42-hiveserver2">步骤42：启动 HiveServer2</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo systemctl enable --now oceaninsight-hiveserver2
+</code></pre>
+<p>HiveServer2 首次启动需要时间。发送下面的等待循环：</p>
+<pre><code class="language-bash">for i in {1..12}; do
+  if sudo ss -lntp | grep -q ':10000'; then
+    echo 'HiveServer2 已启动'
+    break
+  fi
+  echo &quot;等待 HiveServer2：第 ${i}/12 次检查&quot;
+  sleep 10
+done
+</code></pre>
+<p>不要只看 systemd 的 <code>active</code>。进程可能存在，但还没有真正监听端口。</p>
+<h3 id="43-beeline-sql">步骤43：用 Beeline 验证 SQL</h3>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' \
+  -n ecs-user \
+  --silent=true \
+  --showHeader=true \
+  --outputformat=table \
+  -e 'SHOW DATABASES;'
+</code></pre>
+<p>预期至少返回 <code>default</code>。SLF4J 多绑定警告不影响运行，不要为了消除提示删除 JAR。</p>
+<h2 id="java-17-spark-420">八、安装 Java 17 和 Spark 4.2.0</h2>
+<h3 id="44-java-17">步骤44：安装 Java 17</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo dnf -y install java-17-openjdk-devel
+</code></pre>
+<p>验证 Java 17：</p>
+<pre><code class="language-bash">/usr/lib/jvm/java-17/bin/java -version
+</code></pre>
+<p>再检查系统默认 Java：</p>
+<pre><code class="language-bash">java -version
+</code></pre>
+<p>前者必须是17，后者必须仍是11。Spark 4.2使用Java 17；Hadoop、Hive和DataX继续使用Java 11。不要运行 <code>alternatives --config java</code>。</p>
+<h3 id="45-spark">步骤45：下载并校验 Spark</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 5 --retry-delay 3 \
+  -o spark-4.2.0-bin-hadoop3.tgz \
+  https://downloads.apache.org/spark/spark-4.2.0/spark-4.2.0-bin-hadoop3.tgz
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL --retry 3 \
+  -o spark-4.2.0-bin-hadoop3.tgz.sha512 \
+  https://downloads.apache.org/spark/spark-4.2.0/spark-4.2.0-bin-hadoop3.tgz.sha512
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sha512sum -c spark-4.2.0-bin-hadoop3.tgz.sha512
+</code></pre>
+<p>看到 <code>OK</code> 才继续。</p>
+<h3 id="46-spark">步骤46：解压 Spark</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tar -xzf spark-4.2.0-bin-hadoop3.tgz -C /opt
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo ln -sfn /opt/spark-4.2.0-bin-hadoop3 /opt/spark
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /opt/spark-4.2.0-bin-hadoop3
+</code></pre>
+<h3 id="47-spark">步骤47：复制 Spark 最终配置</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cp starter/conf/cloud-final/spark-defaults.conf /opt/spark/conf/spark-defaults.conf
+</code></pre>
+<p>配置固定为 <code>local[4]</code>、Driver 2 GiB、默认并行度4、Shuffle分区8、关闭Spark UI。</p>
+<h3 id="48-spark-hadoop-hive">步骤48：让 Spark 使用现有 Hadoop 和 Hive 配置</h3>
+<p>发送：</p>
+<pre><code class="language-bash">ln -sfn /opt/hive/conf/hive-site.xml /opt/spark/conf/hive-site.xml
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">ln -sfn /opt/hadoop/etc/hadoop/core-site.xml /opt/spark/conf/core-site.xml
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">ln -sfn /opt/hadoop/etc/hadoop/hdfs-site.xml /opt/spark/conf/hdfs-site.xml
+</code></pre>
+<p>Spark 通过软链接读取已经验证的配置，不复制或显示其中的数据库密码。</p>
+<h3 id="49-spark">步骤49：建立 Spark 临时目录和环境变量</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mkdir -p /data/oceaninsight/spark/local
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tee /etc/profile.d/oceaninsight-spark.sh &gt;/dev/null &lt;&lt;'EOF'
+export SPARK_HOME=/opt/spark
+export PATH=$SPARK_HOME/bin:$PATH
+EOF
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">source /etc/profile.d/oceaninsight-spark.sh
+</code></pre>
+<h3 id="50-spark">步骤50：验证 Spark 版本</h3>
+<p>发送：</p>
+<pre><code class="language-bash">JAVA_HOME=/usr/lib/jvm/java-17 spark-submit --version
+</code></pre>
+<p>预期看到 Spark 4.2.0 和 Java 17。下面三个提示不影响本项目：</p>
+<ul>
+<li><code>Using incubator modules</code>；</li>
+<li><code>Unable to load native-hadoop library</code>；</li>
+<li><code>spark.local.dir will be overridden...</code>。</li>
+</ul>
+<h3 id="514-pi">步骤51：运行4线程 Pi 测试</h3>
+<p>发送：</p>
+<pre><code class="language-bash">JAVA_HOME=/usr/lib/jvm/java-17 spark-submit \
+  --master 'local[4]' \
+  /opt/spark/examples/src/main/python/pi.py \
+  20
+</code></pre>
+<p>预期输出包含 <code>Pi is roughly</code>，进程退出码为0。日志同时调度任务0、1、2、3，说明4个本地线程参与执行。</p>
+<h2 id="datax-202308">九、安装 DataX 202308</h2>
+<h3 id="52-datax">步骤52：下载 DataX</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /tmp
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">curl -fL \
+  --retry 5 \
+  --retry-delay 3 \
+  --retry-all-errors \
+  -C - \
+  -o datax-202308.tar.gz \
+  'https://datax-opensource.oss-cn-hangzhou.aliyuncs.com/202308/datax.tar.gz'
+</code></pre>
+<p>DataX 包约1.6 GiB。<code>-C -</code> 表示断点续传；Workbench 断开后重新执行同一条命令即可，不要删除已经下载的部分。</p>
+<h3 id="53-datax">步骤53：校验 DataX</h3>
+<p>发送：</p>
+<pre><code class="language-bash">gzip -t datax-202308.tar.gz
+</code></pre>
+<p>命令没有输出且返回提示符，表示 gzip 结构完整。继续发送：</p>
+<pre><code class="language-bash">sha256sum datax-202308.tar.gz
+</code></pre>
+<p>实测值必须是：</p>
+<pre><code class="language-text">e925d0873e78aea28bf47b96866d127faacdc5a993ef1a92e25189151d5e1aa1
+</code></pre>
+<h3 id="54-datax">步骤54：解压并配置 DataX</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo mkdir -p /opt/datax
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tar -xzf datax-202308.tar.gz -C /opt/datax --strip-components=1
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chown -R ecs-user:ecs-user /opt/datax
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">cp /home/ecs-user/oceaninsight-project1/starter/conf/cloud-final/datax-core.json \
+  /opt/datax/conf/core.json
+</code></pre>
+<p>最终 JVM 为 <code>-Xms512m -Xmx1G</code>。后续教学作业仍在每个 Job 中设置单通道，避免抢占同机服务资源。</p>
+<h3 id="55-datax">步骤55：建立 DataX 命令</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo tee /usr/local/bin/datax &gt;/dev/null &lt;&lt;'EOF'
+#!/usr/bin/env bash
+exec /opt/datax/bin/datax.py &quot;$@&quot;
+EOF
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">sudo chmod 755 /usr/local/bin/datax
+</code></pre>
+<p>这条命令只是给 DataX 官方启动脚本增加一个较短的入口。以后输入 <code>datax 作业文件.json</code>，实际仍由 <code>/opt/datax/bin/datax.py</code> 执行，避免手工拼接 Java classpath。</p>
+<h3 id="56-datax">步骤56：运行 DataX 官方自检</h3>
+<p>发送：</p>
+<pre><code class="language-bash">/opt/datax/bin/datax.py /opt/datax/job/job.json
+</code></pre>
+<p>预期关键结果：</p>
+<pre><code class="language-text">读出记录总数 : 100000
+读写失败总数 : 0
+</code></pre>
+<p>日志中的 <code>totalPhysicalMemory=-0.00G</code> 或 CPU <code>-1.00%</code> 是旧监控代码在 Java 11 上无法取得部分指标，不是任务失败，不要为此更换 Java。</p>
+<h3 id="57-datax">步骤57：确认四个 DataX 插件</h3>
+<p>发送：</p>
+<pre><code class="language-bash">for p in txtfilereader hdfswriter hdfsreader mysqlwriter; do
+  test -d &quot;/opt/datax/plugin/reader/$p&quot; \
+    -o -d &quot;/opt/datax/plugin/writer/$p&quot; \
+    &amp;&amp; echo &quot;$p=OK&quot; \
+    || echo &quot;$p=MISSING&quot;
+done
+</code></pre>
+<p>四项都必须是 <code>OK</code>。</p>
+<h2 id="1">十、第1天最终验收</h2>
+<h3 id="58">步骤58：检查全部进程和服务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<p>预期看到 NameNode、DataNode 和两个 Hive RunJar。继续发送：</p>
+<pre><code class="language-bash">sudo systemctl is-active \
+  mariadb \
+  oceaninsight-hive-metastore \
+  oceaninsight-hiveserver2
+</code></pre>
+<p>三行都应是 <code>active</code>。</p>
+<h3 id="59">步骤59：检查端口</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo ss -lntp | grep -E ':(3306|9000|9083|10000)\b'
+</code></pre>
+<p>3306、9083和10000必须只监听本机地址；9000是本机 HDFS RPC。</p>
+<h3 id="60-sql">步骤60：最终 SQL 和目录检查</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">beeline -u 'jdbc:hive2://127.0.0.1:10000/default' \
+  -n ecs-user \
+  -e 'SHOW DATABASES;'
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">JAVA_HOME=/usr/lib/jvm/java-17 spark-submit --version
+</code></pre>
+<h2 id="1_1">十一、第1天验收表</h2>
+<table>
+<thead>
+<tr>
+<th>验收项</th>
+<th>执行方法</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ECS规格</td>
+<td><code>nproc</code>、<code>free -h</code>、<code>df -h /</code></td>
+<td>4核、约7.3 GiB、约99 GiB</td>
+</tr>
+<tr>
+<td>Java 11</td>
+<td><code>java -version</code></td>
+<td>系统默认为11</td>
+</tr>
+<tr>
+<td>HDFS</td>
+<td><code>jps</code>、<code>hdfs dfs -ls /oceaninsight</code></td>
+<td>NameNode/DataNode存在，目录可列出</td>
+</tr>
+<tr>
+<td>MariaDB</td>
+<td><code>systemctl is-active mariadb</code></td>
+<td>active，仅本机3306</td>
+</tr>
+<tr>
+<td>Hive</td>
+<td>端口和 Beeline</td>
+<td>9083/10000监听，SQL可执行</td>
+</tr>
+<tr>
+<td>Java 17</td>
+<td><code>/usr/lib/jvm/java-17/bin/java -version</code></td>
+<td>版本17</td>
+</tr>
+<tr>
+<td>Spark</td>
+<td><code>spark-submit --version</code>、Pi</td>
+<td>Spark 4.2.0，退出码0</td>
+</tr>
+<tr>
+<td>DataX</td>
+<td>官方 job.json</td>
+<td>100,000条，失败0</td>
+</tr>
+</tbody>
+</table>
+<p>全部通过后，第1天完成。</p>
+<h2 id="_3">十二、当天结束与下次启动</h2>
+<p>如果使用按量付费实例，可以在控制台选择“停止实例→节省停机模式”。不要释放实例。</p>
+<p>下次启动后，MariaDB 和两个 Hive systemd 服务可能显示 active，但 HDFS 不会自动恢复。正确顺序是：只启动已有 NameNode/DataNode，确认 <code>/oceaninsight</code> 可读，再重启 HiveServer2。绝对不要再次格式化 NameNode。第2天开头会逐条执行恢复检查。</p>
+</div>
+</body>
+</html>

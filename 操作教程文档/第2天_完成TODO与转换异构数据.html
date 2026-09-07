@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第2天：完成5个TODO与转换异构数据</title>
+<style>
+
+:root {
+    --c-primary: #0d3b66;
+    --c-primary-light: #1a5276;
+    --c-accent: #2980b9;
+    --c-text: #2c3e50;
+    --c-muted: #5d6d7e;
+    --c-bg: #ffffff;
+    --c-bg-soft: #f8f9fa;
+    --c-border: #e1e5ea;
+    --c-code-bg: #1e2b3a;
+    --c-code-text: #ecf0f1;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 56px 80px 56px;
+    background: #fff;
+}
+.doc-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--c-primary);
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--c-primary);
+    line-height: 1.3;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--c-primary-light);
+    line-height: 1.4;
+    page-break-after: avoid;
+}
+h1 {
+    font-size: 26px;
+    color: var(--c-primary);
+    border-bottom: 2.5px solid var(--c-primary);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+}
+h2 {
+    font-size: 21px;
+    color: var(--c-primary);
+    border-left: 5px solid var(--c-accent);
+    padding-left: 12px;
+    margin: 28px 0 12px;
+}
+h3 {
+    font-size: 17px;
+    color: var(--c-primary-light);
+    margin: 20px 0 8px;
+}
+h4 { font-size: 15px; color: var(--c-accent); margin: 16px 0 6px; }
+p { margin: 8px 0; text-align: justify; }
+pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    padding: 14px 18px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+code {
+    background: #f0f3f6;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+}
+li code { font-size: 12.5px; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 14px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #cfd8dc;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+th {
+    background: linear-gradient(180deg, var(--c-accent) 0%, var(--c-primary-light) 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+tr:nth-child(even) td { background: #f4f8fb; }
+blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border-left: 5px solid #f39c12;
+    color: #7d5d00;
+    border-radius: 4px;
+}
+blockquote p { margin: 4px 0; }
+ul, ol { margin: 8px 0; padding-left: 28px; }
+li { margin: 4px 0; }
+a { color: var(--c-accent); text-decoration: none; border-bottom: 1px dashed var(--c-accent); }
+a:hover { color: var(--c-primary); border-bottom-style: solid; }
+strong { color: #c0392b; font-weight: 700; }
+em { color: #8e44ad; font-style: italic; }
+hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+    margin: 24px 0;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.topbar {
+    background: var(--c-primary);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="topbar">OceanInsight  学生实训教程</div>
+<div class="container">
+<h1 class="doc-title">第2天：完成5个TODO与转换异构数据</h1>
+<h1 id="25todo">第2天：完成5个TODO与转换异构数据</h1>
+<p>版本：学生实操版 V1.0<br>
+适用环境：已经完成第1天，并使用 <code>ecs-user</code> 登录ECS<br>
+今日目标：恢复服务，解压Source，配置Python环境，完成5个TODO和12项测试，生成2份NPZ报告、300份海洋CSV、5份年度船舶活动CSV及1份船舶主数据CSV。</p>
+<blockquote>
+<p>严格按顺序操作。后台命令显示PID只代表已经启动；只有日志出现指定PASS或DONE才算完成。发现已有PID、日志或输出时先检查，不要重复运行。</p>
+</blockquote>
+<h2 id="1">一、恢复第1天环境</h2>
+<h3 id="1_1">步骤1：确认登录用户</h3>
+<p>在Workbench的Shell终端发送：</p>
+<pre><code class="language-bash">whoami
+</code></pre>
+<p>必须输出 <code>ecs-user</code>。如果显示 <code>root</code>，发送 <code>exit</code>，再用 <code>ecs-user</code> 重新登录。</p>
+<h3 id="2">步骤2：检查资源</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">nproc
+</code></pre>
+<pre><code class="language-bash">free -h
+</code></pre>
+<pre><code class="language-bash">df -h /
+</code></pre>
+<p>预期为4核、约7.3 GiB内存。今天会生成数GiB数据，可用磁盘少于20 GiB时停止。</p>
+<h3 id="3hdfs">步骤3：恢复HDFS</h3>
+<p>发送：</p>
+<pre><code class="language-bash">jps
+</code></pre>
+<p>如果已经看到 <code>NameNode</code> 和 <code>DataNode</code>，不要重复启动，直接进入步骤4。如果没有看到，依次发送：</p>
+<pre><code class="language-bash">hdfs --daemon start namenode
+</code></pre>
+<pre><code class="language-bash">hdfs --daemon start datanode
+</code></pre>
+<pre><code class="language-bash">sleep 5
+</code></pre>
+<pre><code class="language-bash">jps
+</code></pre>
+<p>现在必须看到 <code>NameNode</code> 和 <code>DataNode</code>。这里只启动已有HDFS，绝对不要执行 <code>hdfs namenode -format</code>。</p>
+<h3 id="4">步骤4：确认旧目录还在</h3>
+<p>发送：</p>
+<pre><code class="language-bash">hdfs dfs -ls /oceaninsight
+</code></pre>
+<p>应能列出 <code>raw</code>、<code>ods</code>、<code>dwd</code>、<code>dws</code>、<code>ads</code> 和 <code>tmp</code>。</p>
+<h3 id="5hiveserver2">步骤5：恢复HiveServer2</h3>
+<p>先确认MariaDB和Hive Metastore。依次发送：</p>
+<pre><code class="language-bash">sudo systemctl is-active mariadb
+</code></pre>
+<pre><code class="language-bash">sudo systemctl is-active oceaninsight-hive-metastore
+</code></pre>
+<p>两条都应输出 <code>active</code>。如果其中一条不是 <code>active</code>，依次发送：</p>
+<pre><code class="language-bash">sudo systemctl start mariadb
+</code></pre>
+<pre><code class="language-bash">sudo systemctl start oceaninsight-hive-metastore
+</code></pre>
+<pre><code class="language-bash">sleep 10
+</code></pre>
+<p>然后发送：</p>
+<pre><code class="language-bash">sudo systemctl restart oceaninsight-hiveserver2
+</code></pre>
+<p>发送下面的等待循环：</p>
+<pre><code class="language-bash">for i in {1..12}; do
+  if sudo ss -lntp | grep -q ':10000'; then
+    echo 'HIVESERVER2_PORT=PASS'
+    break
+  fi
+  echo &quot;等待HiveServer2：${i}/12&quot;
+  sleep 10
+done
+</code></pre>
+<p>最多等待约2分钟，必须看到 <code>HIVESERVER2_PORT=PASS</code>。</p>
+<h2 id="_1">二、检查并解压学生包</h2>
+<h3 id="6">步骤6：确认四个文件存在</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/packages
+</code></pre>
+<pre><code class="language-bash">ls -lh OceanInsight-project1-source.zip \
+  OceanInsight-project1-source.sha256 \
+  OceanInsight-project1-starter.zip \
+  OceanInsight-project1-starter.sha256
+</code></pre>
+<p>必须列出四个文件。Source约208 MiB，Starter很小：前者保存数据，后者保存代码和配置。</p>
+<h3 id="7zip">步骤7：再次校验两个ZIP</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">sha256sum -c OceanInsight-project1-source.sha256
+</code></pre>
+<pre><code class="language-bash">sha256sum -c OceanInsight-project1-starter.sha256
+</code></pre>
+<p>必须分别看到：</p>
+<pre><code class="language-text">OceanInsight-project1-source.zip: OK
+OceanInsight-project1-starter.zip: OK
+</code></pre>
+<p>出现 <code>FAILED</code> 时不要解压，重新上传对应ZIP。</p>
+<h3 id="8starter">步骤8：确认Starter已经解压</h3>
+<p>发送：</p>
+<pre><code class="language-bash">test -f /home/ecs-user/oceaninsight-project1/starter/pyproject.toml \
+  -a -f /home/ecs-user/oceaninsight-project1/starter/.extract_verify \
+  &amp;&amp; echo 'STARTER_ALREADY_EXTRACTED=YES' \
+  || echo 'STARTER_ALREADY_EXTRACTED=NO'
+</code></pre>
+<p>第1天正常完成时应显示 <code>YES</code>。第1天的完整解压命令会在正式目录建立验证标志；如果显示 <code>NO</code>，不要在第2天继续覆盖或补解压，返回第1天步骤14重新完成Starter解压。</p>
+<h3 id="9source">步骤9：通过临时目录完整解压Source</h3>
+<p>先发送：</p>
+<pre><code class="language-bash">test -f /home/ecs-user/oceaninsight-project1/source/.extract_verify \
+  &amp;&amp; echo 'SOURCE_ALREADY_EXTRACTED=YES' \
+  || echo 'SOURCE_ALREADY_EXTRACTED=NO'
+</code></pre>
+<p>第一次应显示 <code>NO</code>。确认还没有正式目录：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1
+</code></pre>
+<pre><code class="language-bash">test ! -e source &amp;&amp; echo 'SOURCE_TARGET_READY=YES'
+</code></pre>
+<p>必须看到 <code>SOURCE_TARGET_READY=YES</code>。继续发送完整代码块：</p>
+<pre><code class="language-bash">(
+  set -e
+  SOURCE_STAGE=$(mktemp -d \
+    /home/ecs-user/oceaninsight-project1/source_extracting.XXXXXX)
+  python3 -m zipfile -e \
+    packages/OceanInsight-project1-source.zip \
+    &quot;$SOURCE_STAGE&quot;
+  test &quot;$(find &quot;$SOURCE_STAGE/ocean_nc&quot; -type f -name '*.nc' | wc -l)&quot; -eq 300
+  test &quot;$(find &quot;$SOURCE_STAGE/prediction_npz&quot; -type f -name '*.npz' | wc -l)&quot; -eq 2
+  test &quot;$(find &quot;$SOURCE_STAGE/vessel_zip&quot; -type f -name '*.zip' | wc -l)&quot; -eq 5
+  test &quot;$(find &quot;$SOURCE_STAGE/vessel_master&quot; -type f -name '*.csv' | wc -l)&quot; -eq 1
+  touch &quot;$SOURCE_STAGE/.extract_verify&quot;
+  mv &quot;$SOURCE_STAGE&quot; source
+  echo 'SOURCE_EXTRACT_VERIFY=PASS'
+)
+</code></pre>
+<p>必须看到 <code>SOURCE_EXTRACT_VERIFY=PASS</code>。先在随机临时目录验证全部数量，再改名为正式目录；中途中断不会留下一个看似完整的 <code>source</code>。</p>
+<h3 id="10source">步骤10：核对Source数量</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">find source/ocean_nc -type f -name '*.nc' | wc -l
+</code></pre>
+<pre><code class="language-bash">find source/prediction_npz -type f -name '*.npz' | wc -l
+</code></pre>
+<pre><code class="language-bash">find source/vessel_zip -type f -name '*.zip' | wc -l
+</code></pre>
+<pre><code class="language-bash">find source/vessel_master -type f -name '*.csv' | wc -l
+</code></pre>
+<p>预期依次为 <code>300</code>、<code>2</code>、<code>5</code>、<code>1</code>。数量不一致时停止。</p>
+<h2 id="python">三、创建Python环境</h2>
+<h3 id="11">步骤11：创建虚拟环境</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1
+python3 -m venv .venv
+</code></pre>
+<p><code>.venv</code>用于隔离本项目依赖，不污染系统Python。</p>
+<h3 id="12pip">步骤12：升级pip并安装依赖</h3>
+<p>发送：</p>
+<pre><code class="language-bash">.venv/bin/pip install \
+  -i https://mirrors.aliyun.com/pypi/simple \
+  --upgrade pip
+</code></pre>
+<p>发送：</p>
+<pre><code class="language-bash">.venv/bin/pip install \
+  -i https://mirrors.aliyun.com/pypi/simple \
+  -r starter/requirements.txt
+</code></pre>
+<p>等待NumPy、SciPy和psutil安装完成。</p>
+<h3 id="13starter">步骤13：可编辑安装Starter</h3>
+<p>发送：</p>
+<pre><code class="language-bash">.venv/bin/pip install -e starter
+</code></pre>
+<p><code>-e</code>表示保存源码后立即生效，不必重复安装。验证：</p>
+<pre><code class="language-bash">.venv/bin/python -c &quot;import oceaninsight, numpy, scipy, psutil; print('PYTHON_ENV=PASS')&quot;
+</code></pre>
+<p>必须看到 <code>PYTHON_ENV=PASS</code>。</p>
+<h2 id="5todo">四、完成5个TODO</h2>
+<h3 id="14todo">步骤14：打开代码并确认TODO</h3>
+<p>在Workbench左侧文件树打开：</p>
+<pre><code class="language-text">/home/ecs-user/oceaninsight-project1/starter/src/oceaninsight/core.py
+</code></pre>
+<p>Shell发送：</p>
+<pre><code class="language-bash">grep -n 'TODO [1-5]' \
+  /home/ecs-user/oceaninsight-project1/starter/src/oceaninsight/core.py
+</code></pre>
+<p>应看到TODO 1—5各一处。不要改函数名、参数名或其他文件。</p>
+<h3 id="15">步骤15：运行修改前测试</h3>
+<p>发送：</p>
+<pre><code class="language-bash">cd /home/ecs-user/oceaninsight-project1/starter
+../.venv/bin/python -m unittest discover -s tests -v
+</code></pre>
+<p>5项核心测试因 <code>NotImplementedError</code> 失败是正确现象，证明Starter没有夹带答案。</p>
+<blockquote>
+<p>最初服务器实操时是11项测试；收口阶段新增“主数据已有血缘字段时覆盖而不重复追加”的回归测试，因此最终学生包应为12项。新增测试不改变5个TODO。</p>
+</blockquote>
+<h3 id="16todo-1">步骤16：TODO 1——经度标准化</h3>
+<p>在 <code>core.py</code> 中将 <code>normalize_lon</code> 整个函数替换为：</p>
+<pre><code class="language-python">def normalize_lon(lon: float) -&gt; float:
+    &quot;&quot;&quot;Normalize longitude to [-180, 180), keeping 180 as -180.&quot;&quot;&quot;
+    return ((float(lon) + 180.0) % 360.0) - 180.0
+</code></pre>
+<p>作用：把0—360度经度统一为-180—180度，例如200度变成-160度。</p>
+<h3 id="17todo-22">步骤17：TODO 2——映射2°网格</h3>
+<p>将 <code>grid_cell</code> 整个函数替换为：</p>
+<pre><code class="language-python">def grid_cell(lat: float, lon: float, size: float = 2.0) -&gt; tuple[float, float, str]:
+    lon = normalize_lon(lon)
+    lat_ll = math.floor(float(lat) / size) * size
+    lon_ll = math.floor(lon / size) * size
+    return lat_ll, lon_ll, f&quot;g{size:g}_{lat_ll:+06.1f}_{lon_ll:+07.1f}&quot;
+</code></pre>
+<p>作用：把坐标落到2°×2°网格左下角，并生成稳定的 <code>grid_id</code>。</p>
+<h3 id="18todo-3">步骤18：TODO 3——区域判断</h3>
+<p>将 <code>in_region</code> 整个函数替换为：</p>
+<pre><code class="language-python">def in_region(lat: float, lon: float, bounds: dict) -&gt; bool:
+    lon = normalize_lon(lon)
+    return (
+        bounds[&quot;lat_min&quot;] &lt;= float(lat) &lt;= bounds[&quot;lat_max&quot;]
+        and bounds[&quot;lon_min&quot;] &lt;= lon &lt;= bounds[&quot;lon_max&quot;]
+    )
+</code></pre>
+<p>作用：判断坐标是否在10°N—50°N、120°E—160°E内，边界点也保留。</p>
+<h3 id="19todo-4">步骤19：TODO 4——深度分层</h3>
+<p>将 <code>depth_level</code> 整个函数替换为：</p>
+<pre><code class="language-python">def depth_level(depth_m: float) -&gt; str:
+    depth = float(depth_m)
+    if depth &lt;= 10:
+        return &quot;SURFACE&quot;
+    if depth &lt;= 200:
+        return &quot;SHALLOW&quot;
+    if depth &lt;= 750:
+        return &quot;MIDDLE&quot;
+    return &quot;DEEP&quot;
+</code></pre>
+<p>作用：划分表层、浅层、中层和深层，判断顺序不能颠倒。</p>
+<h3 id="20todo-5">步骤20：TODO 5——流速与流向</h3>
+<p>将 <code>current_metrics</code> 整个函数替换为：</p>
+<pre><code class="language-python">def current_metrics(u: float, v: float) -&gt; tuple[float, float]:
+    &quot;&quot;&quot;Return speed and oceanographic direction-to in degrees clockwise from north.&quot;&quot;&quot;
+    speed = math.hypot(float(u), float(v))
+    direction = (math.degrees(math.atan2(float(u), float(v))) + 360.0) % 360.0
+    return speed, direction
+</code></pre>
+<p>作用：由东西向 <code>u</code> 和南北向 <code>v</code> 计算流速及从正北顺时针计量的流向。</p>
+<h3 id="21">步骤21：保存并检查语法</h3>
+<p>按 <code>Ctrl+S</code> 保存。Shell发送：</p>
+<pre><code class="language-bash">../.venv/bin/python -m py_compile src/oceaninsight/core.py
+</code></pre>
+<p>没有输出表示语法正确；出现 <code>SyntaxError</code> 时返回编辑器检查缩进。</p>
+<h3 id="22">步骤22：运行最终测试</h3>
+<p>发送：</p>
+<pre><code class="language-bash">../.venv/bin/python -m unittest discover -s tests -v
+</code></pre>
+<p>必须看到：</p>
+<pre><code class="language-text">Ran 12 tests
+
+OK
+</code></pre>
+<h2 id="npz">五、生成NPZ报告</h2>
+<p>NPZ没有真实日期、经纬度和深度，只生成结构报告，不伪造业务字段，也不与海洋或船舶数据关联。</p>
+<h3 id="23">步骤23：创建目录并生成两份报告</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mkdir -p ../output/npz_reports
+</code></pre>
+<pre><code class="language-bash">../.venv/bin/python -m oceaninsight.cli npz \
+  --input ../source/prediction_npz/train_data_target.npz \
+  --output ../output/npz_reports/train_data_target.json
+</code></pre>
+<pre><code class="language-bash">../.venv/bin/python -m oceaninsight.cli npz \
+  --input ../source/prediction_npz/test_data.npz \
+  --output ../output/npz_reports/test_data.json
+</code></pre>
+<h3 id="24npz">步骤24：验收NPZ形状</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+root = Path('../output/npz_reports')
+train = json.loads((root / 'train_data_target.json').read_text())
+test = json.loads((root / 'test_data.json').read_text())
+assert train['arrays']['data_train']['shape'] == [16625, 37, 12]
+assert train['arrays']['target_train']['shape'] == [16625, 37, 1]
+assert test['arrays']['data_test']['shape'] == [8625, 37, 12]
+print('NPZ_REPORT_VERIFY=PASS')
+PY
+</code></pre>
+<p>必须看到 <code>NPZ_REPORT_VERIFY=PASS</code>。</p>
+<h2 id="nc">六、转换一个NC文件</h2>
+<h3 id="2520171nc">步骤25：转换2017年1月温度NC</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mkdir -p ../output/smoke
+</code></pre>
+<pre><code class="language-bash">../.venv/bin/python -m oceaninsight.cli \
+  --config conf/pipeline.json \
+  nc \
+  --input ../source/ocean_nc/temperature/IAPv4_Temp_monthly_1_6000m_year_2017_month_01.nc \
+  --output ../output/smoke/temperature_2017-01.csv \
+  --manifest ../output/smoke/temperature_2017-01.manifest.json \
+  --batch-id student-nc-smoke
+</code></pre>
+<h3 id="26nc">步骤26：验收单个NC</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+csv_path = Path('../output/smoke/temperature_2017-01.csv')
+report = json.loads(Path('../output/smoke/temperature_2017-01.manifest.json').read_text())
+stats = report['metrics']['nc']
+with csv_path.open(encoding='utf-8') as stream:
+    lines = sum(1 for _ in stream)
+assert stats['input_cells'] == 6400
+assert stats['output_rows'] == 6400
+assert stats['invalid_values'] == 1464
+assert lines == 6401
+print('NC_SMOKE_VERIFY=PASS')
+PY
+</code></pre>
+<p>必须看到 <code>NC_SMOKE_VERIFY=PASS</code>。6401行包括表头；缺失值留空并标为 <code>MISSING</code>。</p>
+<h2 id="300nc">七、后台转换300个NC</h2>
+<h3 id="27">步骤27：确认正式输出为空</h3>
+<p>发送：</p>
+<pre><code class="language-bash">test ! -e ../output/ods/ocean \
+  &amp;&amp; echo 'NC_OUTPUT_READY=YES' \
+  || echo 'NC_OUTPUT_READY=NO'
+</code></pre>
+<p>第一次必须显示 <code>YES</code>。脚本检测到已有正式输出会停止，防止覆盖。</p>
+<h3 id="28pid">步骤28：启动后台任务并保存PID</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sudo install -d -o ecs-user -g ecs-user \
+  /data/oceaninsight/logs
+</code></pre>
+<p>这条命令在目录不存在时创建它，并确保 <code>ecs-user</code> 能写日志；目录已经存在时也会修正所有者。</p>
+<pre><code class="language-bash">nohup bash scripts/cloud/run_nc_all.sh \
+  &gt; /data/oceaninsight/logs/run_nc_all.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<p>终端显示的数字是PID，不代表完成。立即发送：</p>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/run_nc_all.pid
+</code></pre>
+<pre><code class="language-bash">cat /data/oceaninsight/logs/run_nc_all.pid
+</code></pre>
+<h3 id="29">步骤29：等待并查看原任务</h3>
+<p>先等待60秒：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/logs/run_nc_all.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 40 /data/oceaninsight/logs/run_nc_all.log
+</code></pre>
+<p>PID存在表示仍在运行；PID不存在可能已经结束。日志仍显示 <code>NC 数字/300</code> 时继续等待60秒，再查看同一个PID和日志，不要重启。最终必须看到：</p>
+<pre><code class="language-text">NC_CSV_COUNT=300
+NC_MANIFEST_COUNT=300
+NC_ALL_VERIFY=PASS
+NC_ALL_DONE
+</code></pre>
+<h3 id="30nc">步骤30：扫描NC日志和数量</h3>
+<p>发送：</p>
+<pre><code class="language-bash">grep -E 'Traceback|Error|FAIL' /data/oceaninsight/logs/run_nc_all.log \
+  || echo 'NC_LOG_ERROR_SCAN=PASS'
+</code></pre>
+<pre><code class="language-bash">find ../output/ods/ocean -type f -name '*.csv' | wc -l
+</code></pre>
+<p>必须看到 <code>NC_LOG_ERROR_SCAN=PASS</code> 和 <code>300</code>。</p>
+<h2 id="2017zip">八、流式转换2017年船舶ZIP</h2>
+<p>年度ZIP内部是逐日CSV。程序逐成员、逐行读取，不整体解压，可减少磁盘占用。</p>
+<h3 id="312017pid">步骤31：启动2017任务并保存PID</h3>
+<p>发送：</p>
+<pre><code class="language-bash">mkdir -p ../output/ods/vessel
+</code></pre>
+<pre><code class="language-bash">nohup ../.venv/bin/python -m oceaninsight.cli \
+  --config conf/pipeline.json \
+  vessel \
+  --input ../source/vessel_zip/vessel-teaching-2017.zip \
+  --output ../output/ods/vessel/vessel_activity_2017.csv \
+  --manifest ../output/ods/vessel/vessel_activity_2017.manifest.json \
+  --batch-id student-vessel-2017 \
+  &gt; /data/oceaninsight/logs/vessel_2017.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/vessel_2017.pid
+</code></pre>
+<h3 id="322017">步骤32：等待并查看2017任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/logs/vessel_2017.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 30 /data/oceaninsight/logs/vessel_2017.log
+</code></pre>
+<p>PID仍在时再等待60秒。实测关键结果为：</p>
+<pre><code class="language-text">&quot;files&quot;: 123
+&quot;input_rows&quot;: 2928426
+&quot;output_rows&quot;: 2928426
+&quot;invalid_rows&quot;: 0
+&quot;outside_region_rows&quot;: 0
+</code></pre>
+<h3 id="332017">步骤33：逐行验收2017结果</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import csv
+from pathlib import Path
+path = Path('../output/ods/vessel/vessel_activity_2017.csv')
+rows, bad = 0, 0
+months, years = set(), set()
+with path.open(encoding='utf-8', newline='') as stream:
+    for row in csv.DictReader(stream):
+        rows += 1
+        months.add(row['month']); years.add(row['year'])
+        lat, lon = float(row['source_grid_lat']), float(row['source_grid_lon'])
+        if row['quality_flag'] != 'VALID' or not (10 &lt;= lat &lt;= 50 and 120 &lt;= lon &lt;= 160):
+            bad += 1
+assert rows == 2928426
+assert months == {'01', '04', '07', '10'}
+assert years == {'2017'}
+assert bad == 0
+print('VESSEL_2017_VERIFY=PASS')
+PY
+</code></pre>
+<p>扫描约385 MiB文件需要时间。必须看到 <code>VESSEL_2017_VERIFY=PASS</code>。</p>
+<h2 id="20182021">九、串行转换2018—2021年</h2>
+<h3 id="34">步骤34：启动四年任务</h3>
+<p>发送：</p>
+<pre><code class="language-bash">nohup bash scripts/cloud/run_vessel_2018_2021.sh \
+  &gt; /data/oceaninsight/logs/run_vessel_2018_2021.log 2&gt;&amp;1 &lt; /dev/null &amp;
+</code></pre>
+<pre><code class="language-bash">echo $! &gt; /data/oceaninsight/logs/run_vessel_2018_2021.pid
+</code></pre>
+<p>脚本严格按2018、2019、2020、2021串行执行。不要开四个终端并发运行。</p>
+<h3 id="35">步骤35：等待并查看四年任务</h3>
+<p>实测约2分42秒。先发送：</p>
+<pre><code class="language-bash">sleep 60
+</code></pre>
+<pre><code class="language-bash">ps -p &quot;$(cat /data/oceaninsight/logs/run_vessel_2018_2021.pid)&quot; -f
+</code></pre>
+<pre><code class="language-bash">tail -n 40 /data/oceaninsight/logs/run_vessel_2018_2021.log
+</code></pre>
+<p>未完成时继续等待60秒查看原日志。只有看到下面一行才完成：</p>
+<pre><code class="language-text">VESSEL_2018_2021_ALL_DONE
+</code></pre>
+<h3 id="36">步骤36：验收五年汇总</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import json
+from pathlib import Path
+root = Path('../output/ods/vessel')
+rows = 0
+size = 0
+for year in range(2017, 2022):
+    csv_path = root / f'vessel_activity_{year}.csv'
+    report = json.loads((root / f'vessel_activity_{year}.manifest.json').read_text())
+    stats = report['metrics']['vessel']
+    rows += stats['output_rows']; size += csv_path.stat().st_size
+    assert stats['invalid_rows'] == 0
+assert rows == 18638286
+assert size == 2567548151
+assert len(list(root.glob('vessel_activity_*.csv'))) == 5
+assert not list(root.glob('*.tmp'))
+print(f'VESSEL_TOTAL_ROWS={rows}')
+print('VESSEL_FIVE_YEAR_VERIFY=PASS')
+PY
+</code></pre>
+<p>必须看到18,638,286行和 <code>VESSEL_FIVE_YEAR_VERIFY=PASS</code>。</p>
+<h2 id="_2">十、筛选船舶主数据</h2>
+<h3 id="37">步骤37：运行筛选脚本</h3>
+<p>脚本从五年活动CSV收集唯一 <code>(mmsi, year)</code>，只保留实际出现的主数据，并覆盖旧血缘字段。</p>
+<p>发送：</p>
+<pre><code class="language-bash">../.venv/bin/python scripts/cloud/filter_vessel_master.py
+</code></pre>
+<p>关键结果应为：</p>
+<pre><code class="language-text">&quot;required_keys&quot;: 149660
+&quot;input_rows&quot;: 149660
+&quot;output_rows&quot;: 149660
+&quot;missing_keys&quot;: 0
+&quot;output_bytes&quot;: 33171404
+</code></pre>
+<h3 id="38">步骤38：验收主数据</h3>
+<p>发送完整代码块：</p>
+<pre><code class="language-bash">../.venv/bin/python - &lt;&lt;'PY'
+import csv
+from pathlib import Path
+path = Path('../output/ods/vessel/vessel_master.csv')
+with path.open(encoding='utf-8', newline='') as stream:
+    reader = csv.DictReader(stream)
+    fields = reader.fieldnames or []
+    rows, bad, keys = 0, 0, set()
+    for row in reader:
+        rows += 1; keys.add((row['mmsi'], row['year']))
+        if row['batch_id'] != 'student-vessel-master' or row['source_file'] != 'vessel_master.csv':
+            bad += 1
+assert len(fields) == 24
+assert fields.count('batch_id') == 1
+assert fields.count('source_file') == 1
+assert rows == 149660 and len(keys) == 149660 and bad == 0
+print('VESSEL_MASTER_VERIFY=PASS')
+PY
+</code></pre>
+<p>必须看到 <code>VESSEL_MASTER_VERIFY=PASS</code>。两个血缘字段各只有一列，没有重复追加成26列。</p>
+<h2 id="2_1">十一、第2天最终验收</h2>
+<h3 id="39">步骤39：核对成果数量</h3>
+<p>依次发送：</p>
+<pre><code class="language-bash">find ../output/npz_reports -type f -name '*.json' | wc -l
+</code></pre>
+<pre><code class="language-bash">find ../output/ods/ocean -type f -name '*.csv' | wc -l
+</code></pre>
+<pre><code class="language-bash">find ../output/ods/ocean -type f -name '*.manifest.json' | wc -l
+</code></pre>
+<pre><code class="language-bash">find ../output/ods/vessel -type f -name 'vessel_activity_*.csv' | wc -l
+</code></pre>
+<pre><code class="language-bash">find ../output -type f -name '*.tmp' | wc -l
+</code></pre>
+<p>预期依次为 <code>2</code>、<code>300</code>、<code>300</code>、<code>5</code>、<code>0</code>。</p>
+<h3 id="40">步骤40：核对完成标志和磁盘</h3>
+<p>发送：</p>
+<pre><code class="language-bash">grep -E 'NC_ALL_VERIFY=PASS|NC_ALL_DONE' \
+  /data/oceaninsight/logs/run_nc_all.log
+</code></pre>
+<pre><code class="language-bash">grep 'VESSEL_2018_2021_ALL_DONE' \
+  /data/oceaninsight/logs/run_vessel_2018_2021.log
+</code></pre>
+<pre><code class="language-bash">df -h /
+</code></pre>
+<p>实测此阶段完成后系统盘仍有约81 GiB可用。</p>
+<h2 id="2_2">十二、第2天验收表</h2>
+<table>
+<thead>
+<tr>
+<th>验收项</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>学生代码</td>
+<td>5个TODO完成，<code>Ran 12 tests</code>、<code>OK</code></td>
+</tr>
+<tr>
+<td>NPZ</td>
+<td>2份JSON，<code>NPZ_REPORT_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>单个NC</td>
+<td>6,400条、1,464个缺失，<code>NC_SMOKE_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>全部NC</td>
+<td>300个CSV和Manifest，<code>NC_ALL_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>2017船舶</td>
+<td>2,928,426条，<code>VESSEL_2017_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>五年船舶</td>
+<td>18,638,286条，<code>VESSEL_FIVE_YEAR_VERIFY=PASS</code></td>
+</tr>
+<tr>
+<td>船舶主数据</td>
+<td>149,660行、149,660唯一键、24列</td>
+</tr>
+<tr>
+<td>临时文件</td>
+<td><code>.tmp</code>数量为0</td>
+</tr>
+</tbody>
+</table>
+<p>全部通过后，第2天完成。不要删除 <code>source</code>、<code>starter</code>、<code>output</code>、PID或日志；第3天将通过DataX写入HDFS并建立Hive ODS。</p>
+</div>
+</body>
+</html>
