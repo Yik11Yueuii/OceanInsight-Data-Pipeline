@@ -1,6 +1,6 @@
 # OceanInsight Data Pipeline
 
-面向海洋大数据的数据工程实践项目，覆盖多源海洋与船舶数据采集、清洗转换、DataX 入湖、Hive 数仓加工、Spark ADS 构建与 MariaDB 数据发布。
+面向海洋大数据的数据工程实践项目，覆盖多源海洋与船舶数据采集、清洗转换、DataX 入湖、Hive 数仓加工、Spark ADS 构建与 MariaDB 数据发布。（并根据相应操作写了详细教程
 
 ## 项目概览
 
