@@ -21,6 +21,10 @@ logs/
 *.key
 credentials.json
 
+# Non-public source packages and requirements
+/数据包/
+/需求分析文档/
+
 # Editors and operating systems
 .idea/
 .vscode/

@@ -1,42 +1,43 @@
 # OceanInsight Data Pipeline
 
-面向海洋大数据的数据工程实践项目，覆盖多源海洋与船舶数据采集、清洗转换、DataX 入湖、Hive 数仓加工、Spark ADS 构建与 MariaDB 数据发布。（并根据相应操作写了详细教程
+教师工作室背景下的海洋数据工程技术实践，覆盖海洋观测与船舶活动数据的格式转换、数据质量核验、离线数仓加工及分析结果发布。项目同时整理了实施步骤与可复现的技术教程。
 
 ## 项目概览
 
-项目使用 2017—2021 年海洋环境与船舶教学数据，构建从原始数据到分析应用层的完整处理链路：
+处理流程（离线批处理）：
 
-1. 解析 NetCDF 海洋温度、盐度、溶解氧、热含量与海流数据。
-2. 以流式方式处理年度船舶 ZIP 数据，避免整体解压造成资源浪费。
-3. 对多源数据进行质量校验、空间网格化和标准化转换。
-4. 使用 DataX 将数据写入 HDFS，并通过 Hive 建立 ODS、DWD、DWS 分层。
-5. 使用 Spark 构建 ADS 指标，并发布到 CSV 或 MariaDB，供可视化分析使用。
+```text
+NetCDF / NPZ / Vessel ZIP
+          ↓ Python 清洗与格式标准化
+        DataX → HDFS → Hive ODS / DWD / DWS
+                          ↓ Spark ADS
+                       CSV / MariaDB → FineBI
+```
+
+- 使用 Python 处理 NetCDF/NPZ 海洋观测数据及压缩船舶记录，包含流式读取与网格化。
+- 通过 DataX、HDFS、Hive、Spark 组织 ODS / DWD / DWS / ADS 加工。
+- 使用执行日志、记录数核验、结果对账和测试脚本验证流程。
+- 整理云服务器部署、数据处理、数仓加工和结果验收的操作教程。
 
 ## 技术栈
 
-- Python 3
-- NetCDF / NumPy / Pandas
-- Hadoop HDFS / DataX
-- Hive / Spark
-- MariaDB
+Python 3、NumPy / Pandas、NetCDF、DataX、HDFS、Hive、Spark、MariaDB、FineBI。
 
-## 目录结构
+## 公开仓库目录
 
 ```text
-conf/               项目及云端服务配置模板
-datax/              DataX 作业模板
-docs/               Markdown 实训教程与实施记录
-scripts/cloud/      数据处理、数仓加工和发布脚本
-sql/hive/           Hive 分层建表与转换 SQL
-sql/mysql/          MariaDB ADS 表结构与权限 SQL
-src/oceaninsight/   Python 数据处理程序
-tests/              单元测试
-操作教程文档/       可离线查看的 HTML 操作教程
-数据包/             原始教学数据、Starter 包及 SHA-256 校验文件
-需求分析文档/       项目需求规格说明书
+conf/                 脱敏配置模板
+datax/                数据传输任务模板
+docs/                 实施记录与操作教程
+scripts/cloud/        云端数据处理和发布脚本
+sql/hive/             数仓建表和转换 SQL
+sql/mysql/            ADS 发布表结构
+src/oceaninsight/     Python 数据处理代码
+tests/                测试代码
+操作教程文档/         操作说明及公开示意图片
 ```
 
-## 快速开始
+## 快速检查
 
 ```bash
 python -m venv .venv
@@ -47,28 +48,18 @@ python -m unittest discover -s tests -v
 python -m oceaninsight.cli --help
 ```
 
-Windows PowerShell 激活虚拟环境：
+Windows PowerShell 可使用 `.venv\Scripts\Activate.ps1` 激活虚拟环境。
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-$env:PYTHONPATH = "src"
-```
+> 当前公开代码保留教学 TODO。首次运行全部测试时，部分测试会因未补全 TODO 而失败；请参考 [实施教程](docs/项目一_四天实训/README.md)。这不是公开即可一键复现的生产数据平台。
 
-完整环境搭建、数据处理和数仓发布步骤请参阅 [`docs/项目一_四天实训/README.md`](docs/项目一_四天实训/README.md)。
+## 数据与公开范围
 
-> 当前公开版本保留了 5 个教学 TODO。初次运行 12 项测试时应有 7 项通过、5 项因 `NotImplementedError` 失败；按第 2 天教程完成 TODO 后应全部通过。
+为避免未经授权公开工作室提供的资料，**原始数据压缩包、Starter 交付包及需求规格说明书不在当前公开版本中分发**。相关教程保留技术步骤，但其中提到的数据包需要使用者通过合法授权的来源自行获取，不代表公开仓库能够独立复现全部结果。
 
-## 数据说明
+本项目使用的是教学与演示场景数据，不代表实际海洋监测平台的生产数据。任何第三方数据的使用与再分发均应遵守其原始许可。
 
-- `OceanInsight-project1-source.zip` 包含教学使用的 NetCDF、NPZ 与年度船舶数据，使用 Git LFS 管理。
-- `OceanInsight-project1-starter.zip` 是代码与配置的原始交付包。
-- 对应 `.sha256` 文件可用于验证下载完整性。
-- 数据仅用于学习、实验和项目演示；二次使用前请确认原始数据许可及适用范围。
+## 配置与使用边界
 
-## 配置安全
+配置文件使用占位符或本地文件读取凭据，不包含用于访问实际服务器的密钥。请勿向 Git 仓库提交密码、私钥、服务器访问令牌或未经授权的数据资料。
 
-仓库配置文件仅保留脱敏占位符。部署时请通过本地配置或环境变量提供真实密码，不要将凭据提交到 Git。
-
-## License
-
-本仓库暂未附加开源许可证。未经明确授权，默认保留所有权利。
+本仓库目前未附加开源许可证；在未获得明确授权的情况下，不授予第三方复制、再发布或商业使用权。
